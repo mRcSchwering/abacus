@@ -1,0 +1,40 @@
+CREATE TABLE accounts(
+  id        INTEGER PRIMARY KEY NOT NULL, 
+  owner     TEXT NOT NULL,
+  iban      TEXT NOT NULL,
+  bic       TEXT NOT NULL,
+  type      TEXT NOT NULL
+);
+
+CREATE TABLE transactions(
+  [from]    INTEGER REFERENCES accounts,
+  [to]      INTEGER REFERENCES accounts, 
+  date      TEXT NOT NULL,
+  reference TEXT NOT NULL,
+  entry     TEXT NOT NULL,
+  value     INT NOT NULL,
+  currency  TEXT NOT NULL
+);
+CREATE INDEX transact_from_index ON transactions([from]); 
+CREATE INDEX transact_to_index ON transactions([to]);
+
+CREATE TABLE assets(
+  account   INTEGER REFERENCES accounts,
+  date      TEXT NOT NULL,
+  value     INT NOT NULL,
+  currency  TEXT NOT NULL
+);
+CREATE INDEX assets_index ON assets(account); 
+
+CREATE TABLE cashflow(
+  category  TEXT NOT NULL,
+  start_day TEXT NOT NULL,
+  end_day   TEXT NOT NULL,
+  value     INT NOT NULL,
+  currency  TEXT NOT NULL
+);
+
+CREATE TABLE classifier(
+  type      TEXT NOT NULL,
+  model     BLOB
+);
