@@ -1,0 +1,14 @@
+Package: abacus
+Type: Package
+Title: abacus
+Version: 0.1.0
+Date: 26.10.2016
+Author: Marc Schwering
+Maintainer: Marc Schwering <schweringmarc01@gmail.com>
+Depends: R (>= 2.15.0), shiny
+VignetteBuilder: knitr
+Suggests: knitr, rmarkdown, sda, RSQLite
+Description: Collect and classify cash flows in a database.
+License: What license is it under?
+LazyData: TRUE
+RoxygenNote: 5.0.1
