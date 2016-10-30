@@ -7,16 +7,16 @@ CREATE TABLE accounts(
 );
 
 CREATE TABLE transactions(
-  [from]    INTEGER REFERENCES accounts,
-  [to]      INTEGER REFERENCES accounts, 
+  payor     INTEGER REFERENCES accounts,
+  payee     INTEGER REFERENCES accounts, 
   date      TEXT NOT NULL,
   reference TEXT NOT NULL,
   entry     TEXT NOT NULL,
   value     INT NOT NULL,
   currency  TEXT NOT NULL
 );
-CREATE INDEX transact_from_index ON transactions([from]); 
-CREATE INDEX transact_to_index ON transactions([to]);
+CREATE INDEX transact_payor_index ON transactions(payor); 
+CREATE INDEX transact_payee_index ON transactions(payee);
 
 CREATE TABLE assets(
   account   INTEGER REFERENCES accounts,
