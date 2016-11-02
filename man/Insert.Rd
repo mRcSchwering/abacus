@@ -7,13 +7,14 @@
 Insert(data, table, db, add_id = FALSE, enforce_foreign_keys = TRUE)
 }
 \arguments{
-\item{data}{\code{data.frame} or \code{matrix} data to be written into db table, without id (id will be auto incremented)}
+\item{data}{\code{data.frame} of data to be written into db table}
 
 \item{table}{\code{chr} of table name}
 
-\item{db}{\code{chr} of database name/file from current directory}
+\item{db}{\code{chr} full file name with path of database}
 
-\item{add_id}{\code{bool} (\code{FALSE}) whether 1st column named \emph{id} with values \code{NULL} should be added}
+\item{add_id}{\code{bool} (\code{FALSE}) whether 1st column named \emph{id} with values \code{NULL} should be added
+(will be autoincremented in table \emph{accounts})}
 
 \item{enforce_foreign_keys}{\code{bool} (\code{TRUE}) whether to enforce rules on foreign keys}
 }
@@ -28,5 +29,8 @@ The first column id will be added and incremented automatically if \code{add_id}
 df <- data.frame(owner = "B. Clinton", iban = "IR98000020018267384", bic = "IR875TW78", type = "donations account")
 Insert(df, "accounts", "db/mydb.db", add_id = TRUE)
 
+}
+\seealso{
+Other res: \code{\link{Create_testDB}}
 }
 

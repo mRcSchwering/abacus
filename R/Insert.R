@@ -5,11 +5,12 @@
 #'
 #' @family SQLite handler functions
 #'
-#' @param data                 \code{data.frame} or \code{matrix} data to be written into db table, without id (id will be auto incremented)
+#' @param data                 \code{data.frame} of data to be written into db table
 #' @param table                \code{chr} of table name
-#' @param db                   \code{chr} of database name/file from current directory
+#' @param db                   \code{chr} full file name with path of database
 #' @param enforce_foreign_keys \code{bool} (\code{TRUE}) whether to enforce rules on foreign keys
 #' @param add_id               \code{bool} (\code{FALSE}) whether 1st column named \emph{id} with values \code{NULL} should be added
+#'                             (will be autoincremented in table \emph{accounts})
 #'
 #' @return chr HTML for creating ui elements.
 #'
@@ -21,21 +22,18 @@
 #'
 Insert <- function( data, table, db, add_id = FALSE, enforce_foreign_keys = TRUE )
 {
-  if( !(class(data) %in% c("matrix", "data.frame")) ) stop("data must be class matrix or data.frame")
+  if( class(data) != "data.frame" ) stop("data must be class data.frame")
   
+  # connect, set PRAGMA
   con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname = db)
-  if( enforce_foreign_keys ) RSQLite::dbSendQuery(con, "PRAGMA foreign_keys = ON;")
-  addCol <- if( add_id ) c(" (id, ", "VALUES (NULL, ") else c(" (", "VALUES (")
+  if( enforce_foreign_keys ) RSQLite::dbGetQuery(con, "PRAGMA foreign_keys = ON;")
   
-  for( i in 1:nrow(data) ){
-    query <- paste0(
-      "INSERT INTO ", table, 
-      addCol[1], paste(colnames(data), collapse = ", "), ") ",
-      addCol[2], paste0("'", data[i, ], "'", collapse = ", "), ");" 
-    )
-    RSQLite::dbClearResult(RSQLite::dbSendQuery(con, query))
-  }
+  # write in db
+  cols <- paste0("@", names(data), collapse = ", ")
+  if( add_id ) cols <- paste("NULL", cols, sep = ", ")
+  RSQLite::dbGetPreparedQuery(con, sprintf("INSERT INTO %s VALUES (%s)", table, cols), data)
   
+  # disconnect
   RSQLite::dbDisconnect(con)
   return(TRUE)
 } 

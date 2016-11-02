@@ -1,6 +1,4 @@
 
-library(abacus)
-
 #### create accounts
 names <- read.csv("CSV_Database_of_First_Names.csv", stringsAsFactors = FALSE)
 surnames <- read.csv("CSV_Database_of_Last_Names.csv", stringsAsFactors = FALSE)
@@ -19,7 +17,7 @@ set.seed(42)
 konten$iban <- sapply(konten$iban, function(x) paste(c(sample(IBANcountry, 1), sample(c(0, 0, 0:9), sample(16:32, 1), replace = TRUE)), collapse = ""))
 konten$ bic <- sapply(konten$bic, function(x) paste(c(sample(IBANcountry, 1), sample(c(toupper(letters), 0:9), sample(6:9, 1), replace = TRUE)), collapse = ""))
 
-Insert(konten, "accounts", "../db/test.db", add_id = TRUE)
+
 
 
 
@@ -31,6 +29,7 @@ trans <- data.frame(
   reference = "", entry = "", value = NA, currency = "EUR",
   label = sample(c(rep("cash", 20), rep("random", 40), "savings in", rep("savings out", 3)), 1000, replace = TRUE),
 stringsAsFactors = FALSE)
+trans$date <- as.character(trans$date)
 
 # random in
 s <- TRUE
@@ -78,15 +77,27 @@ trans$reference[idx] <- "savings"
 trans$entry[idx] <- "transaction"
 
 trans <- trans[, -8]
-Insert(trans, "transactions", "../db/test.db")
+
+
+
+
+
+
+# save
+accounts <- konten
+transactions <- trans
+save(accounts, file = "accounts.rda")
+save(transactions, file = "transactions.rda")
+rm(list = ls())
+
+
+
+
+
 
 # test enforce rules
 test <- data.frame(payor = 200, payee = 2, date = as.Date("2010-1-1"), reference = "test", entry = "asd", value = 10L, currency = "USD")
 Insert(test, "transactions", "../db/test.db")
-
-# compare memory used: rds vs db
-saveRDS(trans, "trans.rds")
-saveRDS(konten, "konten.rds")
 
 
 
