@@ -19,7 +19,7 @@ Insert(data, table, db, add_id = FALSE, enforce_foreign_keys = TRUE)
 \item{enforce_foreign_keys}{\code{bool} (\code{TRUE}) whether to enforce rules on foreign keys}
 }
 \value{
-chr HTML for creating ui elements.
+\code{TRUE} if successful
 }
 \description{
 Convenience function to write a \code{data.frame} or \code{matrix} into a database table.

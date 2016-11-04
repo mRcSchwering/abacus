@@ -11,6 +11,17 @@ test_that("Create_testDB()", {
 })
 
 
+test_that("test.db contents", {
+  con <- dbConnect(SQLite(), dbname = db)
+  df <- dbGetQuery(con,  "SELECT * FROM sqlite_master") # WHERE tbl_name = 'accounts'")
+  dbDisconnect(con)
+  expect_equal(df$type, c("table", "table", "index", "index", "table", "index", "table", "index", "table", "table"))
+  expect_equal(df$name, c("accounts", "transactions", "transact_payor_index", "transact_payee_index", "capital", 
+                          "capital_index", "personalAccounts", "personalAccounts_index", "cashflow", "classifier"))
+  expect_equal(df$rootpage, c(2, 3, 4, 5, 6, 7, 9, 11, 12, 13))
+})
+
+
 test_that("Insert()", {
   # with add_id
   df <- data.frame(owner = "Harry G", iban = "ASDF1234", bic = "ASD1234", type = "test", stringsAsFactors = FALSE)
@@ -21,7 +32,7 @@ test_that("Insert()", {
   expect_identical(df, df2[, 2:5])
   
   # without add_id
-  df <- data.frame(payor = 1, payee = 20, date = "2010-1-1", reference = "test", entry = "test", value = 1111, currency = "ASD", stringsAsFactors = FALSE)
+  df <- data.frame(payor = 1, payee = 20, date = "2010-1-1", reference = "test", entry = "test", value = 1111, currency = "ASD", label = "test", stringsAsFactors = FALSE)
   expect_true(Insert(df, "transactions", db))
   con <- dbConnect(SQLite(), dbname = db)
   df2 <- dbGetQuery(con, "SELECT * FROM transactions WHERE currency = 'ASD'")

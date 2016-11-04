@@ -12,6 +12,18 @@
 "accounts" 
 
 
+#' 2 fake personal bank accounts
+#'
+#' This is used to create a test data base. They reference the table \emph{accounts}.
+#'
+#' @format A data frame with 2 rows and 2 variables:
+#' \describe{
+#'   \item{account}{id of personal account, references \emph{accounts}}
+#'   \item{comment}{purpose, nature of account}
+#' }
+"personalAccounts"
+
+
 #' 1000 fake transactions
 #'
 #' This is used to create a test data base. They reference the table \emph{accounts}.

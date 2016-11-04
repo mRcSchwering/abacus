@@ -18,20 +18,21 @@ Create_testDB <- function( dbPath = "~/data", dbName = "test" )
   dbName <- file.path(dbPath, paste0(dbName, ".db"))
   
   # read database schema
-  schema <- scan(system.file("extdata", "database_schema", package = "abacus"), what = "", blank.lines.skip = TRUE)
-  cmds <- character(8)
-  n <- 1
-  for( i in schema ){
-    cmds[n] <- paste(cmds[n], i)
-    if( grepl("\\;", i) ) n <- n + 1
-  }
+  schema <- readLines(system.file("extdata", "database_schema", package = "abacus"))
+  schema <- schema[schema != ""]
+  
+  # create commands
+  idx <- which(grepl(";", schema))
+  idx <- rbind(idx, c(1, (idx + 1)[-length(idx)]))
+  cmds <- apply(idx, 2, function(x) paste(schema[x[2]:x[1]], collapse = "\n"))
   
   # create database
   con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname = dbName)
-  for( i in cmds ) RSQLite::dbGetQuery(con, i)
+  for(i in cmds) RSQLite::dbGetQuery(con, i)
   
   # insert test data
   Insert(abacus::accounts, "accounts", dbName, add_id = TRUE)
+  Insert(abacus::personalAccounts, "personalAccounts", dbName)
   Insert(abacus::transactions, "transactions", dbName)
   
   # disconnect

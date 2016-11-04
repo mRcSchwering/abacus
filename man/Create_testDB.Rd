@@ -12,7 +12,7 @@ Create_testDB(dbPath = "~/data", dbName = "test")
 \item{dbName}{\code{chr} (\code{"test"}) name of database / file (\code{.db} will be added)}
 }
 \value{
-\code{TRUE}
+\code{TRUE} if successful
 }
 \description{
 This function creates a test database with 100 accounts and 1000 transactions.

@@ -76,39 +76,27 @@ trans$value[idx] <- sample(c(50000, 100000, 200000), length(idx), replace = TRUE
 trans$reference[idx] <- "savings"
 trans$entry[idx] <- "transaction"
 
-trans <- trans[, -8]
+trans$label[trans$label == "random in"] <- "salary"
+trans$label[trans$label == "cash"] <- "cash withdrawal"
+trans$label[trans$label == "savings out"] <- "investment"
+trans$label[trans$label == "savings in"] <- "withdrawal"
+idx <- which(trans$label == "random") 
+trans$label[idx] <- sample(c(rep("food", 10), "clothing", "purchase", "medics, health"), length(idx), replace = TRUE)
 
 
 
-
+#### create personal accoutns
+pers <- data.frame(account = 1:2, comment = c("giro", "savings"), stringsAsFactors = FALSE)
 
 
 # save
 accounts <- konten
 transactions <- trans
+personalAccounts <- pers
 save(accounts, file = "accounts.rda")
 save(transactions, file = "transactions.rda")
+save(personalAccounts, file = "personalAccounts.rda")
 rm(list = ls())
-
-
-
-
-
-
-# test enforce rules
-test <- data.frame(payor = 200, payee = 2, date = as.Date("2010-1-1"), reference = "test", entry = "asd", value = 10L, currency = "USD")
-Insert(test, "transactions", "../db/test.db")
-
-
-
-
-
-
-
-
-
-
-
 
 
 

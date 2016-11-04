@@ -13,25 +13,33 @@ CREATE TABLE transactions(
   reference TEXT NOT NULL,
   entry     TEXT NOT NULL,
   value     INT NOT NULL,
-  currency  TEXT NOT NULL
+  currency  TEXT NOT NULL,
+  label     TEXT NOT NULL
 );
-CREATE INDEX transact_payor_index ON transactions(payor); 
+CREATE INDEX transact_payor_index ON transactions(payor);
 CREATE INDEX transact_payee_index ON transactions(payee);
 
-CREATE TABLE assets(
+CREATE TABLE capital(
   account   INTEGER REFERENCES accounts,
   date      TEXT NOT NULL,
   value     INT NOT NULL,
   currency  TEXT NOT NULL
 );
-CREATE INDEX assets_index ON assets(account); 
+CREATE INDEX capital_index ON capital(account); 
+
+CREATE TABLE personalAccounts(
+  account   INTEGER REFERENCES accounts,
+  comment   TEXT NOT NULL
+);
+CREATE INDEX personalAccounts_index ON personalAccounts(account); 
 
 CREATE TABLE cashflow(
   category  TEXT NOT NULL,
   start_day TEXT NOT NULL,
   end_day   TEXT NOT NULL,
   value     INT NOT NULL,
-  currency  TEXT NOT NULL
+  currency  TEXT NOT NULL,
+  comment   TEXT
 );
 
 CREATE TABLE classifier(
