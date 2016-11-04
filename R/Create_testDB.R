@@ -7,7 +7,7 @@
 #' @param dbPath               \code{chr} (\code{"~/data"}) path to database directory 
 #' @param dbName               \code{chr} (\code{"test"}) name of database / file (\code{.db} will be added)
 #' 
-#' @return \code{TRUE}
+#' @return \code{TRUE} if successful
 #'
 #' @export
 #'

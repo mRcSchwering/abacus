@@ -12,7 +12,7 @@
 #' @param add_id               \code{bool} (\code{FALSE}) whether 1st column named \emph{id} with values \code{NULL} should be added
 #'                             (will be autoincremented in table \emph{accounts})
 #'
-#' @return chr HTML for creating ui elements.
+#' @return \code{TRUE} if successful
 #'
 #' @examples
 #' df <- data.frame(owner = "B. Clinton", iban = "IR98000020018267384", bic = "IR875TW78", type = "donations account")
@@ -22,7 +22,7 @@
 #'
 Insert <- function( data, table, db, add_id = FALSE, enforce_foreign_keys = TRUE )
 {
-  if( class(data) != "data.frame" ) stop("data must be class data.frame")
+  stopifnot(inherits(data, "data.frame"))
   
   # connect, set PRAGMA
   con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname = db)
