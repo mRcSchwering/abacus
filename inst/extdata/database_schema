@@ -2,8 +2,7 @@ CREATE TABLE accounts(
   id        INTEGER PRIMARY KEY NOT NULL, 
   owner     TEXT NOT NULL,
   iban      TEXT NOT NULL,
-  bic       TEXT NOT NULL,
-  type      TEXT NOT NULL
+  bic       TEXT NOT NULL
 );
 
 CREATE TABLE transactions(
@@ -14,7 +13,7 @@ CREATE TABLE transactions(
   entry     TEXT NOT NULL,
   value     INT NOT NULL,
   currency  TEXT NOT NULL,
-  label     TEXT NOT NULL
+  type      TEXT NOT NULL
 );
 CREATE INDEX transact_payor_index ON transactions(payor);
 CREATE INDEX transact_payee_index ON transactions(payee);
@@ -29,20 +28,20 @@ CREATE INDEX capital_index ON capital(account);
 
 CREATE TABLE personalAccounts(
   account   INTEGER REFERENCES accounts,
-  comment   TEXT NOT NULL
+  type      TEXT NOT NULL
 );
 CREATE INDEX personalAccounts_index ON personalAccounts(account); 
 
 CREATE TABLE cashflow(
-  category  TEXT NOT NULL,
   start_day TEXT NOT NULL,
   end_day   TEXT NOT NULL,
   value     INT NOT NULL,
   currency  TEXT NOT NULL,
+  category  TEXT NOT NULL,
   comment   TEXT
 );
 
-CREATE TABLE classifier(
-  type      TEXT NOT NULL,
-  model     BLOB
+CREATE TABLE storage(
+  name      TEXT NOT NULL,
+  data      BLOB
 );

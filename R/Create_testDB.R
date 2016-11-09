@@ -2,7 +2,7 @@
 #'
 #' This function creates a test database with 100 accounts and 1000 transactions.
 #'
-#' @family test functions
+#' @family test.db functions
 #'
 #' @param dbPath               \code{chr} (\code{"~/data"}) path to database directory 
 #' @param dbName               \code{chr} (\code{"test"}) name of database / file (\code{.db} will be added)

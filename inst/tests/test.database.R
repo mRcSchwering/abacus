@@ -17,22 +17,22 @@ test_that("test.db contents", {
   dbDisconnect(con)
   expect_equal(df$type, c("table", "table", "index", "index", "table", "index", "table", "index", "table", "table"))
   expect_equal(df$name, c("accounts", "transactions", "transact_payor_index", "transact_payee_index", "capital", 
-                          "capital_index", "personalAccounts", "personalAccounts_index", "cashflow", "classifier"))
+                          "capital_index", "personalAccounts", "personalAccounts_index", "cashflow", "storage"))
   expect_equal(df$rootpage, c(2, 3, 4, 5, 6, 7, 9, 11, 12, 13))
 })
 
 
 test_that("Insert()", {
   # with add_id
-  df <- data.frame(owner = "Harry G", iban = "ASDF1234", bic = "ASD1234", type = "test", stringsAsFactors = FALSE)
+  df <- data.frame(owner = "Harry G", iban = "ASDF1234", bic = "ASD1234", stringsAsFactors = FALSE)
   expect_true(Insert(df, "accounts", db, add_id = TRUE))
   con <- dbConnect(SQLite(), dbname = db)
   df2 <- dbGetQuery(con, "SELECT * FROM accounts WHERE id > 100")
   dbDisconnect(con)
-  expect_identical(df, df2[, 2:5])
+  expect_identical(df, df2[, 2:4])
   
   # without add_id
-  df <- data.frame(payor = 1, payee = 20, date = "2010-1-1", reference = "test", entry = "test", value = 1111, currency = "ASD", label = "test", stringsAsFactors = FALSE)
+  df <- data.frame(payor = 1, payee = 20, date = "2010-1-1", reference = "test", entry = "test", value = 1111, currency = "ASD", type = "test", stringsAsFactors = FALSE)
   expect_true(Insert(df, "transactions", db))
   con <- dbConnect(SQLite(), dbname = db)
   df2 <- dbGetQuery(con, "SELECT * FROM transactions WHERE currency = 'ASD'")
@@ -40,17 +40,17 @@ test_that("Insert()", {
   expect_equal(df, df2)
   
   # foreign keys eforced
-  df <- data.frame(payor = 102, payee = 20, date = "2010-1-1", reference = "test", entry = "test", value = 1111, currency = "ASD", stringsAsFactors = FALSE)
+  df <- data.frame(payor = 102, payee = 20, date = "2010-1-1", reference = "test", entry = "test", value = 1111, currency = "ASD", type = "test", stringsAsFactors = FALSE)
   expect_error(Insert(df, "transactions", db))
   
   # insert a BLOB
   x <- list(a = 1:5, b = list(c = c("a", "b")))
   x_ <- list(serialize(x, NULL))
-  df <- data.frame(type = "test2", model = I(x_), stringsAsFactors = FALSE)
-  expect_true(Insert(df, "classifier", db))
+  df <- data.frame(name = "test2", data = I(x_), stringsAsFactors = FALSE)
+  expect_true(Insert(df, "storage", db))
   con <- dbConnect(SQLite(), dbname = db)
-  df <- dbGetQuery(con, "SELECT * FROM classifier")
-  x2 <- unserialize(df$model[[1]])
+  df <- dbGetQuery(con, "SELECT * FROM storage")
+  x2 <- unserialize(df$data[[1]])
   expect_identical(x, x2)
   dbDisconnect(con)
 })
