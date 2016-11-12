@@ -1,4 +1,4 @@
-#' Insert
+#' Select
 #'
 #' Convenience function to write a \code{data.frame} or \code{matrix} into a database table.
 #' The first column id will be added and incremented automatically if \code{add_id} is enabled.
@@ -20,7 +20,7 @@
 #'
 #' @export
 #'
-Insert <- function( data, table, db, add_id = FALSE, enforce_foreign_keys = TRUE )
+Select <- function( data, table, db, where = NULL )
 {
   stopifnot(inherits(data, "data.frame"))
   
@@ -36,6 +36,15 @@ Insert <- function( data, table, db, add_id = FALSE, enforce_foreign_keys = TRUE
   # disconnect
   RSQLite::dbDisconnect(con)
   return(TRUE)
+  
+  
+  SELECT t1.dies, t2.das, t3.jenes
+  FROM table AS t1
+  INNER JOIN table2 AS t2
+  ON t1.id=t2.id
+  INNER JOIN table3 AS t3
+  ON t1.id=t3.id
+  WHERE something;
 } 
 
 

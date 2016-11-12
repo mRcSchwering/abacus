@@ -15,14 +15,14 @@ test_that("test.db contents", {
   con <- dbConnect(SQLite(), dbname = db)
   df <- dbGetQuery(con,  "SELECT * FROM sqlite_master") # WHERE tbl_name = 'accounts'")
   dbDisconnect(con)
-  expect_equal(df$type, c("table", "table", "index", "index", "table", "index", "table", "index", "table", "table"))
+  expect_equal(df$type, c("table", "table", "index", "index", "table", "index", "table", "index", "table", "table", "index"))
   expect_equal(df$name, c("accounts", "transactions", "transact_payor_index", "transact_payee_index", "capital", 
-                          "capital_index", "personalAccounts", "personalAccounts_index", "cashflow", "storage"))
-  expect_equal(df$rootpage, c(2, 3, 4, 5, 6, 7, 9, 11, 12, 13))
+                          "capital_index", "personalAccounts", "personalAccounts_index", "cashflow", "storage", "sqlite_autoindex_storage_1"))
+  expect_equal(df$rootpage, c(2, 3, 4, 5, 6, 7, 9, 11, 12, 13, 14))
 })
 
 
-test_that("Insert()", {
+test_that("write db", {
   # with add_id
   df <- data.frame(owner = "Harry G", iban = "ASDF1234", bic = "ASD1234", stringsAsFactors = FALSE)
   expect_true(Insert(df, "accounts", db, add_id = TRUE))
@@ -45,14 +45,15 @@ test_that("Insert()", {
   
   # insert a BLOB
   x <- list(a = 1:5, b = list(c = c("a", "b")))
-  x_ <- list(serialize(x, NULL))
-  df <- data.frame(name = "test2", data = I(x_), stringsAsFactors = FALSE)
-  expect_true(Insert(df, "storage", db))
+  expect_true(InsertBLOB("test", x, db))
   con <- dbConnect(SQLite(), dbname = db)
   df <- dbGetQuery(con, "SELECT * FROM storage")
   x2 <- unserialize(df$data[[1]])
   expect_identical(x, x2)
   dbDisconnect(con)
+  
+  # unique enforced
+  expect_error(InsertBLOB("test", x, db))
 })
 
 

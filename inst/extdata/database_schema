@@ -42,6 +42,7 @@ CREATE TABLE cashflow(
 );
 
 CREATE TABLE storage(
-  name      TEXT NOT NULL,
+  name      TEXT UNIQUE NOT NULL,
   data      BLOB
 );
+

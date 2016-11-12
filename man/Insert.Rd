@@ -31,6 +31,6 @@ Insert(df, "accounts", "db/mydb.db", add_id = TRUE)
 
 }
 \seealso{
-Other res: \code{\link{Create_testDB}}
+Other SQLite handler functions: \code{\link{InsertBLOB}}
 }
 

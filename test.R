@@ -12,7 +12,3 @@ library(RSQLite)
 Create_testDB("./db")
 
 
-
-
-
-
