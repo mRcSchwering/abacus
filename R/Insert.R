@@ -15,8 +15,9 @@
 #' @return \code{TRUE} if successful
 #'
 #' @examples
+#' Create_testDB("./db")
 #' df <- data.frame(owner = "B. Clinton", iban = "IR98000020018267384", bic = "IR875TW78", type = "donations account")
-#' Insert(df, "accounts", "db/mydb.db", add_id = TRUE)
+#' Insert(df, "accounts", "db/test.db", add_id = TRUE)
 #'
 #' @export
 #'
@@ -57,7 +58,10 @@ Insert <- function( data, table, db, add_id = FALSE, enforce_foreign_keys = TRUE
 #' @return \code{TRUE} if successful
 #'
 #' @examples
-#' Insert("test", list(a = 1:10, b = mtcars), "db/mydb.db")
+#' Create_testDB("./db")
+#' x <- list(a = 1:5, b = list(c = c("a", "b")))
+#' InsertBLOB("test2", x, db)
+#' SelectBLOB("test2", db)
 #'
 #' @export
 #'

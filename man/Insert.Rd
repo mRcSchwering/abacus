@@ -26,11 +26,13 @@ Convenience function to write a \code{data.frame} or \code{matrix} into a databa
 The first column id will be added and incremented automatically if \code{add_id} is enabled.
 }
 \examples{
+Create_testDB("./db")
 df <- data.frame(owner = "B. Clinton", iban = "IR98000020018267384", bic = "IR875TW78", type = "donations account")
-Insert(df, "accounts", "db/mydb.db", add_id = TRUE)
+Insert(df, "accounts", "db/test.db", add_id = TRUE)
 
 }
 \seealso{
-Other SQLite handler functions: \code{\link{InsertBLOB}}
+Other SQLite handler functions: \code{\link{InsertBLOB}},
+  \code{\link{SelectBLOB}}, \code{\link{Select}}
 }
 

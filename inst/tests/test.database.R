@@ -57,6 +57,39 @@ test_that("write db", {
 })
 
 
+test_that("read db", {
+  
+  # accounts with eq
+  df <- Select("accounts", db, eq = list(id = 100))
+  expect_identical(df$owner, "Malcom Absalon")
+  
+  # transactions (mult. join) with ge and le dates
+  df <- Select("transactions", db, ge = list(date = "2010-1-1"), le = list(date = "2010-1-2"))
+  expect_identical(colnames(df)[c(1, 8, 14)], c("payor_id", "payee_bic", "type"))
+  expect_equal(nrow(df), 10)
+  expect_identical(df$reference[5], "Thanks, Aldi")
+  
+  # transact (mult. join) with mult. eq, and le
+  df <- Select("transactions", db, le = list(payor_id = 2), eq = list(type = c("food", "purchase")))
+  expect_equal(nrow(df), 506)
+  
+  # personalAccounts (join)
+  df <- Select("personalAccounts", db)
+  expect_identical(df$account_owner[2], "Tressa Denham")
+  
+  # wrong table
+  expect_error(Select("test", db))
+  
+  # wrong column
+  expect_error(Select("accounts", eq = list(payor_id = 2)))
+  
+  # select a BLOB
+  x <- list(a = 1:5, b = list(c = c("a", "b")))
+  expect_true(InsertBLOB("test2", x, db))
+  x2 <- SelectBLOB("test2", db)
+  expect_identical(x, x2)
+})
+
 file.remove(db)
 
 

@@ -3,3 +3,5 @@
 export(Create_testDB)
 export(Insert)
 export(InsertBLOB)
+export(Select)
+export(SelectBLOB)

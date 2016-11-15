@@ -4,35 +4,34 @@
 #' One of the 6 table names can be given with optional \code{WHERE} statements.
 #' In case transactions, capital or personalAccounts is selected, a \code{INNER JOIN} with accounts will be done (2 joins for transactions).
 #' 
-#' With \code{where} a condition can be specified.
-#' It is given as list where an element name defines the column and a character value its condition.
-#' If the name is \code{date}, \code{start_day}, or \code{end_day}, it is interpredted as date in a standard unambiguous format.
-#' If it has 1 element, it will be compared with \code{=}, if it has 2 with \code{>=} and \code{<=} combined with \code{AND}.
-#' Any other names will be interpreted as a character and directly compared using \code{=}. 
-#' Several values, within one list element will be combined with \code{OR}.
-#' Conditions of several list elements will be combined with \code{AND}.
+#' A \code{WHERE} condition can be added with arguments \code{eq} (equal), \code{ge} (greater-equal), \code{le} (lesser-equal).
+#' Conditions are given as list for the desired relation. The name of a list element defines a column and its value the value.
+#' Multiple \code{ge} and \code{se} conditions are combined by \code{AND} and \code{eq} conditions by \code{OR}.
+#' 
+#' You can set \code{check_query} to \code{TRUE} to see the query.
 #'
 #' @family SQLite handler functions
 #'
 #' @param table                \code{chr} of table name, will automatically be \code{INNER JOIN}ed in case relation exists
 #' @param db                   \code{chr} full file name with path of database
-#' @param where                \code{list} (\code{NULL}) specifying \code{WHERE} arguments (see details) or \code{NULL}
+#' @param eq                   \code{list} (\code{NULL}) defining a condition with \code{=} (equal). . 
+#'                              Element name specifies column, value its value (see details)
+#' @param ge                   \code{list} (\code{NULL}) defining a condition with \code{>=} (greater-equal). 
+#'                              Element name specifies column, value its value (see details)
+#' @param le                   \code{list} (\code{NULL}) defining a condition with \code{<=} (lesser-equal). . 
+#'                              Element name specifies column, value its value (see details)
 #' @param enforce_foreign_keys \code{bool} (\code{TRUE}) whether to enforce rules on foreign keys
 #' @param check_query          \code{bool} (\code{FALSE}) whether to just return the SQL query without actually sending it
 #'
-#' @return \code{TRUE} if successful
+#' @return \code{data.frame} of table
 #'
 #' @examples
-#' df <- data.frame(owner = "B. Clinton", iban = "IR98000020018267384", bic = "IR875TW78", type = "donations account")
-#' Insert(df, "accounts", "db/mydb.db", add_id = TRUE)
+#' Create_testDB("./db")
+#' df <- Select("transactions", "db/test.db", le = list(payor_id = 2), eq = list(type = c("food", "purchase")))
 #'
 #' @export
 #'
-
-Select("storage", "db/test.db")
-
-
-Select <- function( table, db, where = NULL, enforce_foreign_keys = TRUE, check_query = FALSE )
+Select <- function( table, db, eq = NULL, ge = NULL, le = NULL, enforce_foreign_keys = TRUE, check_query = FALSE )
 {
   stopifnot(table %in% c("accounts", "transactions", "capital", "personalAccounts", "cashflow", "storage"))
   
@@ -73,38 +72,45 @@ Select <- function( table, db, where = NULL, enforce_foreign_keys = TRUE, check_
     sto = table
   )
   
-  # wheres
-  wheres <- ""
-  if( !is.null(where) ){
+  # conditions
+  where <- NULL
+  if( any(!c(is.null(eq), is.null(ge), is.null(le))) ){
+    ands <- NULL
+    ors <- NULL
     
-    # date, start_day, end_day
-    if( any(names(where) %in% c("date", "start_day", "end_day")) ){
-      dates <- intersect(names(where), c("date", "start_day", "end_day"))
-      for( i in dates ){
-        if( length(where[[i]]) < 2 ){
-          date <- as.character(as.Date(where[[i]]))
-          wheres <- append(wheres, sprintf("%s = '%s'", i, date))
-        } else {
-          date <- as.character(sort(as.Date(where[[i]])))
-          wheres <- append(wheres, sprintf("%1$s >= '%2$s' AND %1$s <= '%3$s'", i, date[1], date[2]))
-        }
-      }
-    }
+    # dates
+    idx <- which(grepl("date|day", names(eq)))
+    for( i in idx ) ors <- append(ors, sprintf("%s = '%s'", names(eq)[i], as.character(as.Date(eq[[i]]))))
+    eq[idx] <- NULL
+    idx <- which(grepl("date|day", names(ge)))
+    for( i in idx ) ands <- append(ands, sprintf("%s >= '%s'", names(ge)[i], as.character(as.Date(ge[[i]]))))
+    ge[idx] <- NULL
+    idx <- which(grepl("date|day", names(le)))
+    for( i in idx ) ands <- append(ands, sprintf("%s <= '%s'", names(le)[i], as.character(as.Date(le[[i]]))))
+    le[idx] <- NULL
     
-    # any kind of string
-    if( any(!names(where) %in% c("date", "start_day", "end_day")) ){
-      strings <- setdiff(names(where), c("date", "start_day", "end_day"))
-      for( i in strings ){
-        wheres <- append(wheres, paste(sprintf("%s = '%s'", i, where[[i]]), collapse = " OR "))
-      }
-    }
+    # ids
+    idx <- which(grepl("id", names(eq)))
+    for( i in idx ) ors <- append(ors, sprintf("%s = '%s'", names(eq)[i], eq[[i]]))
+    eq[idx] <- NULL
+    idx <- which(grepl("id", names(ge)))
+    for( i in idx ) ands <- append(ands, sprintf("%s >= '%s'", names(ge)[i], ge[[i]]))
+    ge[idx] <- NULL
+    idx <- which(grepl("id", names(le)))
+    for( i in idx ) ands <- append(ands, sprintf("%s <= '%s'", names(le)[i], le[[i]]))
+    le[idx] <- NULL
+
+    # the rest (strings, only eq)
+    if(length(eq) > 0) for(i in 1:length(eq)) ors <- append(ors, sprintf("%s = '%s'", names(eq)[i], eq[[i]]))
 
     # combine
-    wheres <- sprintf("WHERE %s", paste(wheres[-1], collapse = " AND "))
+    if(!is.null(ands)) ands <- paste(ands, collapse = " AND ")
+    if(!is.null(ors)) ors <- paste(ors, collapse = " OR ")
+    where <- paste(c(ands, ors), collapse = " AND ")
   }
 
   # query
-  query <- sprintf("SELECT %s FROM %s %s", columns, joins, wheres)
+  query <- if(is.null(where)) sprintf("SELECT %s FROM %s", columns, joins) else sprintf("SELECT %s FROM %s WHERE %s", columns, joins, where)
   if( check_query ) return(query)
 
   # connect, set PRAGMA
@@ -124,34 +130,34 @@ Select <- function( table, db, where = NULL, enforce_foreign_keys = TRUE, check_
 
 
 
-#' InsertBLOB
+#' SelectBLOB
 #'
-#' Convenience function to write any kind of object into a SQLite table.
+#' Convenience function to retrieve any kind of BLOB stored in table \emph{storage} of SQLite database
 #'
 #' @family SQLite handler functions
 #'
 #' @param name                 \code{chr} name of BLOB
-#' @param data                 any object that is to be stored as BLOB
 #' @param db                   \code{chr} full file name with path of database
-#' @param table                \code{chr} table name ("storage")
 #'
-#' @return \code{TRUE} if successful
+#' @return \code{R} object selected
 #'
 #' @examples
-#' Insert("test", list(a = 1:10, b = mtcars), "db/mydb.db")
+#' Create_testDB("./db")
+#' x <- list(a = 1:5, b = list(c = c("a", "b")))
+#' InsertBLOB("test2", x, db)
+#' SelectBLOB("test2", db)
 #'
 #' @export
 #'
-InsertBLOB <- function( name, data, db, table = "storage" )
+SelectBLOB <- function( name, db )
 {
   stopifnot(inherits(name, "character"), length(name) == 1)
   
-  # prepare data
-  data <- list(serialize(data, NULL))
-  data <- data.frame(name = name, data = I(data), stringsAsFactors = FALSE)
+  # select
+  df <- Select("storage", db, eq = list(name = name))
   
-  # write in db
-  res <- abacus::Insert(data, table, db)
-  return(res)
+  # retrieve data
+  obj <- unserialize(df$data[[1]])
+  return(obj)
 } 
 
