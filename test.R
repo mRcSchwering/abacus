@@ -13,6 +13,37 @@ Create_testDB("./db")
 
 
 
+###### Conversion
+
+# abt1 = referenz, abt2 muss angepasst werden
+abt1 <- list(
+  features = data.frame( name = rep(letters[1:3], each = 2), value = c("a", "c", "b", "c", "b", "c")),
+  data = cbind(1:10, 11:20, 21:30, 31:40, 41:50, 51:60)
+)
+# abt2: a:c nicht vorhanden, b_b an anderer STelle, c:c und c:b vertauscht
+abt2 <- list(
+  features = data.frame( name = c("a", rep("b", 3), "c", "c"), value = c("c", "b", "a", "c", "c", "b")),
+  data = cbind(11:20, 21:30, 81:90, 31:40, 51:60, 41:50)
+)
+
+idx <- numeric()
+ref <- paste(abt1$features$name, abt1$features$value, sep = ":")
+new <- paste(abt2$features$name, abt2$features$value, sep = ":")
+for( i in ref ) idx <- append(idx, if(i %in% new) which(new == i) else 0)
+idx
+
+zeros <- rep(0, nrow(abt1$data))
+
+out <- do.call(cbind, lapply(idx, function(x) if(x == 0) zeros else abt2$data[, x]))
+
+out
+abt1$data
+
+
+
+
+
+
 
 
 ###### Feature Extraction
@@ -21,70 +52,20 @@ db <- "db/test.db"
 ta <- Select("transactions", db)
 pa <- Select("personalAccounts", db)
 
+abt <- FeatureExtraction(ta, pa )
 
-# country code
-x <- sort(unique(strtrim(ta$payor_iban, width = 2)))
-payor_country <- lapply(x, function(x) grepl(tolower(x), tolower(ta$payor_iban)))
-names(payor_country) <- tolower(x)
 
-x <- sort(unique(strtrim(ta$payee_iban, width = 2)))
-payee_country <- lapply(x, function(x) grepl(tolower(x), tolower(ta$payee_iban)))
-names(payee_country) <- tolower(x)
 
-# bank code
-x <- sort(unique(strtrim(ta$payor_bic, width = 4)))
-payor_bank <- lapply(x, function(x) grepl(tolower(x), tolower(ta$payor_bic)))
-names(payor_bank) <- tolower(x)
 
-x <- sort(unique(strtrim(ta$payee_bic, width = 4)))
-payee_bank <- lapply(x, function(x) grepl(tolower(x), tolower(ta$payee_bic)))
-names(payee_bank) <- tolower(x)
 
-# owners
-x <- sort(unique(tolower(ta$payor_owner)))
-payor_owner <- lapply(x, function(x) grepl(tolower(x), tolower(ta$payor_owner)))
-names(payor_owner) <- x
 
-x <- sort(unique(tolower(ta$payee_owner)))
-payee_owner <- lapply(x, function(x) grepl(tolower(x), tolower(ta$payee_owner)))
-names(payee_owner) <- x
 
-# own accounts
-x <- sort(pa$account_id[pa$account_id %in% ta$payor_id])
-payor_pa <- lapply(x, function(x) grepl(tolower(x), tolower(ta$payor_id)))
-names(payor_pa) <- x
 
-x <- sort(pa$account_id[pa$account_id %in% ta$payee_id])
-payee_pa <- lapply(x, function(x) grepl(tolower(x), tolower(ta$payee_id)))
-names(payee_pa) <- x
 
-# reference
-reference <- sort(gsub("[^a-z ]", "", tolower(ta$reference)))
-x <- unlist(strsplit(unique(reference), " "))
-reference <- lapply(x, function(x) grepl(tolower(x), reference))
-names(reference) <- x
 
-# entry
-entry <- sort(gsub("[^a-z ]", "", tolower(ta$entry)))
-x <- unlist(strsplit(unique(entry), " "))
-entry <- lapply(x, function(x) grepl(tolower(x), entry))
-names(entry) <- x
 
-# value
-value <- list(mod5 = ta$value %% 500 == 0, mod50 = ta$value %% 5000 == 0, mod100 = ta$value %% 10000 == 0, ge100 = ta$value >= 10000)
 
-# create feature list and abt
-feats <- c( "payor_country", "payee_country", "payor_bank", "payee_bank", "payor_owner", "payee_owner", "payor_pa", "payee_pa", 
-            "reference", "entry", "value")
-featureList <- data.frame(
-  name = unlist(lapply( feats, function(x) rep(x, length(get(x))) )), 
-  value = unlist(lapply( feats, function(x) names(get(x)) )),
-stringsAsFactors = FALSE)
-abt <- do.call(cbind, unlist(lapply(feats, get), recursive = FALSE))
 
-abt[100:110, 100:110]
-
-rownames(abt[100:130])
 
 
 ###### ABT

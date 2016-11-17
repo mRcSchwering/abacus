@@ -17,4 +17,7 @@ Create_testDB(dbPath = "~/data", dbName = "test")
 \description{
 This function creates a test database with 100 accounts and 1000 transactions.
 }
+\seealso{
+Other test.db functions: \code{\link{FeatureExtraction}}
+}
 
