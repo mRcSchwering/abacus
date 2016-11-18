@@ -3,13 +3,29 @@ library(abacus)
 context("Machine learning functions")
 
 
-
-
-
-
-
-test_that("Create_testDB()", {
-  expect_true(Create_testDB("."))
+test_that("Feature Extraction", {
+  df <- data.frame(
+    payor_id = 1:4, payor_owner = rep("a\\s[] d:.", 4), payor_iban = c("D\\E000342", "ENasd/;:.,", "es1234", "_d-#üäeö"), payor_bic = rep("as\\Df_`\\[]{}()"),
+    payee_id = 4:1, payee_owner = rep("a\\s[] d:.", 4), payee_iban = c("DE000342", "EN\\[]{}/()", "es1234", "d_e1~*#!$%"), payee_bic = rep("asDf&^°|<>"),
+    date = c("2010-1-1", "2010-01-01", "1990-1-1", "1990-01-01"),
+    reference = c("as_d üäö:,|as\\d_%&/´", "t_e;üsö:,|t\\_%$§/´", "test test", "asd"),
+    entry = c("as#'d üäö:^°as\\d_%&/´", "t_e(;))üsö:,|t\\_%$[§]/´", "test te{s}\\t", "asd"),
+    value = c("500", "10000", "50219", "0")
+  )
+  df2 <- data.frame(account_id = 1)
+  exp <- cbind(c(1,0,0,1), c(0,1,0,0), c(0,0,1,0))
+  exp <- cbind(exp, exp)
+  exp <- cbind(exp, matrix(1,4,4), c(1,0,0,0), c(0,0,0,1), c(1,0,0,1), c(0,1,1,0), c(1,0,0,1), c(0,1,1,0), 
+               c(1,1,0,1), c(0,1,0,1), c(0,1,0,1), c(0,1,1,0))
+  res <- FeatureExtraction(df, df2)
+  feats <- res$FeatureList
+  abt <- matrix(res$ABT, 4, 20)
+  expect_equal(as.character(unique(feats$value[grepl("country", feats$name)])), c("de", "en", "es"))
+  expect_equal(as.character(unique(feats$value[grepl("owner", feats$name)])), "as d")
+  expect_equal(as.character(unique(feats$value[grepl("bank", feats$name)])), "asdf")
+  expect_equal(as.character(unique(feats$value[grepl("reference", feats$name)])), c("asd", "test"))
+  expect_equal(as.character(unique(feats$value[grepl("entry", feats$name)])), c("asd", "test"))
+  expect_equal(exp, abt)
 })
 
 
