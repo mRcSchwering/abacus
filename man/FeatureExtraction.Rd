@@ -31,7 +31,14 @@ Columns represent features, rows data points (= transactions).
 The ABT is accompanied by a \emph{FeatureList} which describes the features.
 It is necessary for conversion between different ABTs.
 }
+\examples{
+Create_testDB("./db")
+ta <- Select("transactions", "db/test.db")
+pa <- Select("personalAccounts", "db/test.db")
+res <- FeatureExtraction(ta, pa)
+
+}
 \seealso{
-Other test.db functions: \code{\link{Create_testDB}}
+Other machine learning: \code{\link{Convert}}
 }
 

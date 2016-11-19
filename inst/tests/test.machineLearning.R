@@ -30,7 +30,19 @@ test_that("Feature Extraction", {
 
 
 
-
+test_that("ABT Conversion", {
+  abt1 <- matrix(1:60, 10, 6)
+  feats1 <- data.frame(name = rep(letters[1:3], each = 2), value = letters[1:6])
+  feats2 <- data.frame(name =c("a", "b", "b", "b", "c", "c", "a", "d", "d"),
+                       value = c("b", "c", "d", "a", "a", "f", "a", "a", "b"))
+  abt2 <- cbind(11:20, 21:30, 31:40, rep(0,10), rep(0,10), 51:60, 1:10, rep(0,10), rep(0,10))
+  expect_error(Convert(abt1, feats2, feats1))
+  res <- Convert(abt1, feats1, feats2)
+  expect_equal(res, abt2)
+  res <- Convert(abt2, feats2, feats1)
+  abt1[, 5] <- 0
+  expect_equal(abt1, res)
+})
 
 
 # expect_equal # mit num ungenauigkeit

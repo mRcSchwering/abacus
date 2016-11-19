@@ -9,7 +9,7 @@
 #' The ABT is accompanied by a \emph{FeatureList} which describes the features.
 #' It is necessary for conversion between different ABTs.
 #'
-#' @family test.db functions
+#' @family machine learning
 #'
 #' @param ta               \code{data.frame} of \emph{transactions} joined with \emph{accounts} as returned 
 #'                         by \code{\link{Select("transactions", ...)}} 
@@ -21,6 +21,12 @@
 #'    \item \code{int matrix} of class \emph{ABT}, an analytics base table containing features as columns, data points as rows
 #'    \item \code{data.frame} of class \emph{FeatureList}, a description of \emph{ABT} columns with names and values
 #' }
+#'
+#' @examples 
+#' Create_testDB("./db")
+#' ta <- Select("transactions", "db/test.db")
+#' pa <- Select("personalAccounts", "db/test.db")
+#' res <- FeatureExtraction(ta, pa)
 #'
 #' @export
 #'

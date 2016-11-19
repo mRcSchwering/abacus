@@ -2,6 +2,9 @@
 Icon=folder-blue
 
 [Dolphin]
-Timestamp=2016,10,26,22,13,56
+Timestamp=2016,11,19,11,28,36
 Version=3
 ViewMode=1
+
+[Settings]
+HiddenFilesShown=true

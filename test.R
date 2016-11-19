@@ -6,53 +6,16 @@ test_dir("./inst/tests")
 
 
 library(abacus)
-library(RSQLite)
 
 # create test.db
 Create_testDB("./db")
 
 
 
-###### Conversion
-
-# abt1 = referenz, abt2 muss angepasst werden
-abt1 <- list(
-  features = data.frame( name = rep(letters[1:3], each = 2), value = c("a", "c", "b", "c", "b", "c")),
-  data = cbind(1:10, 11:20, 21:30, 31:40, 41:50, 51:60)
-)
-# abt2: a:c nicht vorhanden, b_b an anderer STelle, c:c und c:b vertauscht
-abt2 <- list(
-  features = data.frame( name = c("a", rep("b", 3), "c", "c"), value = c("c", "b", "a", "c", "c", "b")),
-  data = cbind(11:20, 21:30, 81:90, 31:40, 51:60, 41:50)
-)
-
-idx <- numeric()
-ref <- paste(abt1$features$name, abt1$features$value, sep = ":")
-new <- paste(abt2$features$name, abt2$features$value, sep = ":")
-for( i in ref ) idx <- append(idx, if(i %in% new) which(new == i) else 0)
-idx
-
-zeros <- rep(0, nrow(abt1$data))
-
-out <- do.call(cbind, lapply(idx, function(x) if(x == 0) zeros else abt2$data[, x]))
-
-out
-abt1$data
 
 
 
 
-
-
-
-
-###### Feature Extraction
-
-db <- "db/test.db"
-ta <- Select("transactions", db)
-pa <- Select("personalAccounts", db)
-
-abt <- FeatureExtraction(ta, pa )
 
 
 
