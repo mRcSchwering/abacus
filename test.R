@@ -1,6 +1,7 @@
 
 library(testthat)
 test_dir("./inst/tests")
+test_dir(system.file("tests", "", package = "abacus"))
 
 
 
@@ -9,6 +10,56 @@ library(abacus)
 
 # create test.db
 Create_testDB("./db")
+
+
+tas <- Select("transactions", "db/test.db")
+pas <- Select("personalAccounts", "db/test.db")
+labs <- tas$type
+
+res <- FeatureExtraction(tas, pas)
+abt <- res$ABT
+feats <- res$FeatureList
+
+res <- Train(abt, labs, feats)
+model <- res$Model
+ranks <- res$Ranking
+
+plot(ranks)
+summary(ranks)
+summary(model)
+
+new <- tas[-900:-1,]
+res <- FeatureExtraction(new, pas)
+abt2 <- res$ABT
+feats2 <- res$FeatureList
+
+pred <- Predict(model, abt2, feats2, feats)
+summary(pred)
+sum(pred$class == new$type) / length(pred$class) * 100
+
+
+
+CV
+sum(err$class == err$prediction) / nrow(err) * 100
+
+
+
+
+
+
+
+
+
+
+devtools::install()
+roxygen2::roxygenise()
+
+
+
+
+
+
+
 
 
 

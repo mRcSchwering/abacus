@@ -38,11 +38,49 @@ test_that("ABT Conversion", {
   abt2 <- cbind(11:20, 21:30, 31:40, rep(0,10), rep(0,10), 51:60, 1:10, rep(0,10), rep(0,10))
   expect_error(Convert(abt1, feats2, feats1))
   res <- Convert(abt1, feats1, feats2)
-  expect_equal(res, abt2)
+  expect_equal(sum(!(res == abt2)), 0)
+  expect_equal(length(colnames(res)), 9)
   res <- Convert(abt2, feats2, feats1)
   abt1[, 5] <- 0
-  expect_equal(abt1, res)
+  expect_equal(sum(!(abt1 == res)), 0)
 })
+
+
+
+test_that("Training and Prediction", {
+  set.seed(42)
+  abt1 <- matrix(sample(0:1, 1000*100, replace = TRUE), 1000, 100)
+  feats1 <- data.frame(name = "test", value = 1:100)
+  labs1 <- sample(0:1, 1000, replace = TRUE)
+  expect_warning(model <- Training(abt1, labs1, feats1, ranking = TRUE))
+  expect_true(inherits(model$Model, "sda"))
+  expect_true(inherits(model$Ranking, "sda.ranking"))
+  abt2 <- matrix(sample(0:1, 1000*100, replace = TRUE), 1000, 100)
+  feats2 <- data.frame(name = "test", value = 100:1)
+  labs2 <- sample(0:1, 1000, replace = TRUE)
+  pred <- Prediction(model$Model, abt2, feats2, model$FeatureList)
+  expect_length(pred$class, 1000)
+  expect_gte(sum(pred$class == labs2), 450)
+  expect_lte(sum(pred$class == labs2), 550)
+})
+
+
+
+test_that("Cross Validation", {
+  abt1 <- matrix(sample(0:1, 1000*100, replace = TRUE), 1000, 100)
+  feats1 <- data.frame(name = "test", value = 1:100)
+  labs1 <- sample(0:1, 1000, replace = TRUE)
+  err <- CV(abt1, feats1, labs1, k = 3)
+  expect_gte(sum(err$class == err$prediction), 450)
+  expect_lte(sum(err$class == err$prediction), 550)
+  err <- CV(abt1, feats1, labs1, k = 7)
+  expect_gte(sum(err$class == err$prediction), 450)
+  expect_lte(sum(err$class == err$prediction), 550)
+})
+
+
+
+
 
 
 # expect_equal # mit num ungenauigkeit

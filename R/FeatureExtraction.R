@@ -12,14 +12,14 @@
 #' @family machine learning
 #'
 #' @param ta               \code{data.frame} of \emph{transactions} joined with \emph{accounts} as returned 
-#'                         by \code{\link{Select("transactions", ...)}} 
+#'                         by \code{\link{Select}("transactions", ...)} 
 #' @param pa               \code{data.frame} of \emph{personalAccounts} joined with \emph{accounts} as returned 
-#'                         by \code{\link{Select("personalAccounts", ...)}} 
+#'                         by \code{\link{Select}("personalAccounts", ...)} 
 #' 
 #' @return \code{list} of 2 objects
 #' \itemize{
-#'    \item \code{int matrix} of class \emph{ABT}, an analytics base table containing features as columns, data points as rows
-#'    \item \code{data.frame} of class \emph{FeatureList}, a description of \emph{ABT} columns with names and values
+#'    \item \emph{ABT} \code{int matrix} analytics base table containing features as columns, data points as rows
+#'    \item \emph{FeatureList} \code{data.frame} description of \emph{ABT} columns with names and values
 #' }
 #'
 #' @examples 
@@ -93,7 +93,6 @@ FeatureExtraction <- function( ta, pa )
   abt <- do.call(cbind, unlist(lapply(feats, get, envir = env), recursive = FALSE))
   colnames(abt) <- paste(features$name, features$value, sep = ":")
   mode(abt) <- "integer"
-  class(abt) <- "ABT"
-  class(features) <- "FeatureList"
+  
   return(list(ABT = abt, FeatureList = features))
 }

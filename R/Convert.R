@@ -41,6 +41,7 @@ Convert <- function( abt, feats, ref )
   blank <- rep(0, nrow(abt))
   
   out <- do.call(cbind, lapply(idx, function(x) if(x == 0) blank else abt[, x]))
+  colnames(out) <- ref
   return(out)
 }
 

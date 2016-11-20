@@ -8,16 +8,16 @@ FeatureExtraction(ta, pa)
 }
 \arguments{
 \item{ta}{\code{data.frame} of \emph{transactions} joined with \emph{accounts} as returned 
-by \code{\link{Select("transactions", ...)}}}
+by \code{\link{Select}("transactions", ...)}}
 
 \item{pa}{\code{data.frame} of \emph{personalAccounts} joined with \emph{accounts} as returned 
-by \code{\link{Select("personalAccounts", ...)}}}
+by \code{\link{Select}("personalAccounts", ...)}}
 }
 \value{
 \code{list} of 2 objects
 \itemize{
-   \item \code{int matrix} of class \emph{ABT}, an analytics base table containing features as columns, data points as rows
-   \item \code{data.frame} of class \emph{FeatureList}, a description of \emph{ABT} columns with names and values
+   \item \emph{ABT} \code{int matrix} analytics base table containing features as columns, data points as rows
+   \item \emph{FeatureList} \code{data.frame} description of \emph{ABT} columns with names and values
 }
 }
 \description{
@@ -39,6 +39,8 @@ res <- FeatureExtraction(ta, pa)
 
 }
 \seealso{
-Other machine learning: \code{\link{Convert}}
+Other machine learning: \code{\link{CV}},
+  \code{\link{Convert}}, \code{\link{Prediction}},
+  \code{\link{Training}}
 }
 

@@ -37,6 +37,8 @@ Convert(abt1, feats1, feats2)
 
 }
 \seealso{
-Other machine learning: \code{\link{FeatureExtraction}}
+Other machine learning: \code{\link{CV}},
+  \code{\link{FeatureExtraction}},
+  \code{\link{Prediction}}, \code{\link{Training}}
 }
 
