@@ -3,11 +3,6 @@
 #' This function trains a shrinkage discriminant analysis (sda) classifier as in \code{\link{Training}} in a \code{k}-fold 
 #' cross validation.
 #' A \code{data.frame} with class labels and predictions is returned which can be used for prediction power estimation.
-#' 
-#' This function uses the \emph{sda} package for training and ranking of a sda classifier.
-#' Shrinkage intensity for correlation matrix, variances, and frequencies is estimated from the data.
-#' With \code{diagonal} set to \code{TRUE} only the diagonal of the covariance matrix is used.
-#' This speeds up the process and uses less memory.
 #'
 #' @family machine learning
 #'
@@ -15,7 +10,7 @@
 #' @param labs             \code{vector} defining class labels of rows in training data
 #' @param feats            \code{data.frame} with columns \emph{name} and \emph{value} which identifies the features (columns)
 #'                         of \code{abt} with \code{chr} values
-#' @param diagonal         \code{bool} (=\code{FALSE}) if true DDA instead of LDA is done
+#' @param ...              arguments passed to \code{link{Training}}
 #' 
 #' @return \code{data.frame} with class labels and predictions by the classifier
 #' 
@@ -28,7 +23,7 @@
 #'
 #' @export
 #'
-CV <- function( abt, feats, labs, k = 5, diagonal = FALSE )
+CV <- function( abt, feats, labs, k = 5, ... )
 {
   stopifnot(ncol(abt) == nrow(feats), length(labs) == nrow(abt))
   if(k < 1) stop("k must be greater 0 you idiot!")
@@ -47,7 +42,7 @@ CV <- function( abt, feats, labs, k = 5, diagonal = FALSE )
     trainlabs <- labs[ks != i]
     
     # train and predict
-    model <- Training(train, trainlabs, feats, diag = diagonal)
+    model <- Training(train, trainlabs, feats, ...)
     pred <- Prediction(model$Model, test, feats, model$FeatureList)
     
     # save results

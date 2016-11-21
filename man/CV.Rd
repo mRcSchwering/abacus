@@ -4,7 +4,7 @@
 \alias{CV}
 \title{CV}
 \usage{
-CV(abt, feats, labs, k = 5, diagonal = FALSE)
+CV(abt, feats, labs, k = 5, ...)
 }
 \arguments{
 \item{abt}{\code{num matrix} containing training data with rows as observations and columns as features}
@@ -14,7 +14,7 @@ of \code{abt} with \code{chr} values}
 
 \item{labs}{\code{vector} defining class labels of rows in training data}
 
-\item{diagonal}{\code{bool} (=\code{FALSE}) if true DDA instead of LDA is done}
+\item{...}{arguments passed to \code{link{Training}}}
 }
 \value{
 \code{data.frame} with class labels and predictions by the classifier
@@ -23,12 +23,6 @@ of \code{abt} with \code{chr} values}
 This function trains a shrinkage discriminant analysis (sda) classifier as in \code{\link{Training}} in a \code{k}-fold 
 cross validation.
 A \code{data.frame} with class labels and predictions is returned which can be used for prediction power estimation.
-}
-\details{
-This function uses the \emph{sda} package for training and ranking of a sda classifier.
-Shrinkage intensity for correlation matrix, variances, and frequencies is estimated from the data.
-With \code{diagonal} set to \code{TRUE} only the diagonal of the covariance matrix is used.
-This speeds up the process and uses less memory.
 }
 \examples{
 abt1 <- matrix(sample(0:1, 1000*100, replace = TRUE), 1000, 100)
