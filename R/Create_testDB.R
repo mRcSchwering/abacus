@@ -4,18 +4,16 @@
 #'
 #' @family test.db functions
 #'
-#' @param dbPath               \code{chr} (\code{"~/data"}) path to database directory 
-#' @param dbName               \code{chr} (\code{"test"}) name of database / file (\code{.db} will be added)
+#' @param dbName               \code{chr} (\code{"test"}) name of database / file (and path)
 #' 
 #' @return \code{TRUE} if successful
 #'
 #' @export
 #'
-Create_testDB <- function( dbPath = "~/data", dbName = "test" )
+Create_testDB <- function( dbName = "~/data/test.db" )
 {
   # get paths right
-  dbPath <- normalizePath(dbPath)
-  dbName <- file.path(dbPath, paste0(dbName, ".db"))
+  dbName <- file.path(getwd(), dbName)
   
   # read database schema
   schema <- readLines(system.file("extdata", "database_schema", package = "abacus"))

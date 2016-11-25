@@ -18,7 +18,8 @@ SelectBLOB(name, db)
 Convenience function to retrieve any kind of BLOB stored in table \emph{storage} of SQLite database
 }
 \examples{
-Create_testDB("./db")
+db <- "db/test.db"
+Create_testDB(db)
 x <- list(a = 1:5, b = list(c = c("a", "b")))
 InsertBLOB("test2", x, db)
 SelectBLOB("test2", db)
@@ -26,6 +27,7 @@ SelectBLOB("test2", db)
 }
 \seealso{
 Other SQLite handler functions: \code{\link{InsertBLOB}},
-  \code{\link{Insert}}, \code{\link{Select}}
+  \code{\link{Insert}}, \code{\link{Select}},
+  \code{\link{UpdateBLOB}}, \code{\link{Update}}
 }
 

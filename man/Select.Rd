@@ -41,12 +41,14 @@ Multiple \code{ge} and \code{se} conditions are combined by \code{AND} and \code
 You can set \code{check_query} to \code{TRUE} to see the query.
 }
 \examples{
-Create_testDB("./db")
+db <- "db/test.db"
+Create_testDB(db)
 df <- Select("transactions", "db/test.db", le = list(payor_id = 2), eq = list(type = c("food", "purchase")))
 
 }
 \seealso{
 Other SQLite handler functions: \code{\link{InsertBLOB}},
-  \code{\link{Insert}}, \code{\link{SelectBLOB}}
+  \code{\link{Insert}}, \code{\link{SelectBLOB}},
+  \code{\link{UpdateBLOB}}, \code{\link{Update}}
 }
 

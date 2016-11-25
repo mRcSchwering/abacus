@@ -26,7 +26,8 @@
 #' @return \code{data.frame} of table
 #'
 #' @examples
-#' Create_testDB("./db")
+#' db <- "db/test.db"
+#' Create_testDB(db)
 #' df <- Select("transactions", "db/test.db", le = list(payor_id = 2), eq = list(type = c("food", "purchase")))
 #'
 #' @export
@@ -142,7 +143,8 @@ Select <- function( table, db, eq = NULL, ge = NULL, le = NULL, enforce_foreign_
 #' @return \code{R} object selected
 #'
 #' @examples
-#' Create_testDB("./db")
+#' db <- "db/test.db"
+#' Create_testDB(db)
 #' x <- list(a = 1:5, b = list(c = c("a", "b")))
 #' InsertBLOB("test2", x, db)
 #' SelectBLOB("test2", db)
@@ -155,6 +157,7 @@ SelectBLOB <- function( name, db )
   
   # select
   df <- Select("storage", db, eq = list(name = name))
+  if(nrow(df) < 1) return(NULL)
   
   # retrieve data
   obj <- unserialize(df$data[[1]])

@@ -23,9 +23,10 @@
 #' }
 #'
 #' @examples 
-#' Create_testDB("./db")
-#' ta <- Select("transactions", "db/test.db")
-#' pa <- Select("personalAccounts", "db/test.db")
+#' db <- "db/test.db"
+#' Create_testDB(db)
+#' ta <- Select("transactions", db)
+#' pa <- Select("personalAccounts", db)
 #' res <- FeatureExtraction(ta, pa)
 #'
 #' @export
