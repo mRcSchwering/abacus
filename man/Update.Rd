@@ -35,7 +35,8 @@ Select("accounts", db, eq = list(id = c(3,4)))
 }
 \seealso{
 Other SQLite handler functions: \code{\link{InsertBLOB}},
-  \code{\link{Insert}}, \code{\link{SelectBLOB}},
-  \code{\link{Select}}, \code{\link{UpdateBLOB}}
+  \code{\link{Insert}}, \code{\link{Intersect}},
+  \code{\link{SelectBLOB}}, \code{\link{Select}},
+  \code{\link{UpdateBLOB}}
 }
 

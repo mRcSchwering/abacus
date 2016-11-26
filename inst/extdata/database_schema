@@ -4,6 +4,7 @@ CREATE TABLE accounts(
   iban      TEXT NOT NULL,
   bic       TEXT NOT NULL
 );
+CREATE UNIQUE INDEX uq_accounts ON accounts(iban, bic);
 
 CREATE TABLE transactions(
   payor     INTEGER REFERENCES accounts,

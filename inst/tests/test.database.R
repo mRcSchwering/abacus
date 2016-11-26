@@ -15,10 +15,10 @@ test_that("test.db contents", {
   con <- dbConnect(SQLite(), dbname = db)
   df <- dbGetQuery(con,  "SELECT * FROM sqlite_master") # WHERE tbl_name = 'accounts'")
   dbDisconnect(con)
-  expect_equal(df$type, c("table", "table", "index", "index", "table", "index", "table", "index", "table", "table", "index"))
-  expect_equal(df$name, c("accounts", "transactions", "transact_payor_index", "transact_payee_index", "capital", 
+  expect_equal(df$type, c("table", "index", "table", "index", "index", "table", "index", "table", "index", "table", "table", "index"))
+  expect_equal(df$name, c("accounts", "uq_accounts", "transactions", "transact_payor_index", "transact_payee_index", "capital", 
                           "capital_index", "personalAccounts", "personalAccounts_index", "cashflow", "storage", "sqlite_autoindex_storage_1"))
-  expect_equal(df$rootpage, c(2, 3, 4, 5, 6, 7, 9, 11, 12, 13, 14))
+  expect_equal(df$rootpage, c(2, 3, 4, 5, 6, 7, 9, 11, 12, 13, 14, 15))
 })
 
 
@@ -55,6 +55,7 @@ test_that("write db", {
   
   # unique enforced
   expect_error(InsertBLOB("test", x, db))
+  expect_error(Insert(data.frame(owner = "Harry G", iban = "ASDF1234", bic = "ASD1234"), "accounts", add_id = TRUE))
 })
 
 
@@ -94,7 +95,7 @@ test_that("read db", {
 test_that("updating db", {
   
   # several updates
-  df <- data.frame(id = 3:4, owner = rep("test",2), iban = rep("test",2), bic = rep("test",2), stringsAsFactors = FALSE)
+  df <- data.frame(id = 3:4, owner = rep("test",2), iban = c("tst1", "tst2"), bic = c("tst1", "tst2"), stringsAsFactors = FALSE)
   Update(df, "accounts", "id", db)
   df2 <- Select("accounts", db, eq = list(id = c(3,4)))
   expect_identical(df, df2)
@@ -112,6 +113,27 @@ test_that("updating db", {
   d2 <- SelectBLOB("test3", db)
   expect_identical(d, d2)
 })
+
+
+test_that("finding dublicate entries in db", {
+  
+  # for accounts
+  df <- data.frame(owner = c("O1", "O2", "O3"), iban = c("AAA", "BBB", "CCC"), bic = c("AAA", "BBB", "CCC")) 
+  expect_true(Insert(df, "accounts", db, add_id = TRUE))
+  df2 <- rbind(df, df)
+  df2$iban[c(1,2)] <- df2$iban[c(2,1)]
+  df2$bic[6] <- df2$iban[5]
+  res <- Intersect(df2, "accounts", db)
+  expect_identical(res, c(F,F,T,T,T,F))
+  
+  # for storage
+  expect_true(InsertBLOB("t1", "test", db))
+  expect_true(InsertBLOB("t2", "test", db))
+  res <- Intersect(data.frame(name = c("t3", "t2", "t1", "t0")), "storage", db)
+  expect_identical(res, c(F,T,T,F))
+})
+
+
 
 
 

@@ -4,7 +4,7 @@
 \alias{Select}
 \title{Select}
 \usage{
-Select(table, db, eq = NULL, ge = NULL, le = NULL,
+Select(table, db, eq = NULL, ge = NULL, le = NULL, all_and = FALSE,
   enforce_foreign_keys = TRUE, check_query = FALSE)
 }
 \arguments{
@@ -20,6 +20,8 @@ Element name specifies column, value its value (see details)}
 
 \item{le}{\code{list} (\code{NULL}) defining a condition with \code{<=} (lesser-equal). . 
 Element name specifies column, value its value (see details)}
+
+\item{all_and}{\code{bool} (\code{FALSE}) whether all conditions are combined with \code{AND}}
 
 \item{enforce_foreign_keys}{\code{bool} (\code{TRUE}) whether to enforce rules on foreign keys}
 
@@ -37,6 +39,7 @@ In case transactions, capital or personalAccounts is selected, a \code{INNER JOI
 A \code{WHERE} condition can be added with arguments \code{eq} (equal), \code{ge} (greater-equal), \code{le} (lesser-equal).
 Conditions are given as list for the desired relation. The name of a list element defines a column and its value the value.
 Multiple \code{ge} and \code{se} conditions are combined by \code{AND} and \code{eq} conditions by \code{OR}.
+With \code{all_and} set to \code{TRUE} everything is combined with \code{AND}.
 
 You can set \code{check_query} to \code{TRUE} to see the query.
 }
@@ -48,7 +51,8 @@ df <- Select("transactions", "db/test.db", le = list(payor_id = 2), eq = list(ty
 }
 \seealso{
 Other SQLite handler functions: \code{\link{InsertBLOB}},
-  \code{\link{Insert}}, \code{\link{SelectBLOB}},
-  \code{\link{UpdateBLOB}}, \code{\link{Update}}
+  \code{\link{Insert}}, \code{\link{Intersect}},
+  \code{\link{SelectBLOB}}, \code{\link{UpdateBLOB}},
+  \code{\link{Update}}
 }
 

@@ -68,10 +68,12 @@ Update <- function( data, table, check, db, enforce_foreign_keys = TRUE )
 #' @return \code{TRUE} if successful
 #'
 #' @examples
-#' Create_testDB("./db")
-#' x <- list(a = 1:5, b = list(c = c("a", "b")))
-#' InsertBLOB("test2", x, db)
-#' SelectBLOB("test2", db)
+#' db <- "db/test.db"
+#' Create_testDB(db)
+#' d <- list(test = "some test")
+#' InsertBLOB("test3", list(a = 1:10, b = list(a = letters)), db)
+#' UpdateBLOB("test3", d, db)
+#' d2 <- SelectBLOB("test3", db)
 #'
 #' @export
 #'

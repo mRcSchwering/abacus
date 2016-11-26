@@ -9,6 +9,14 @@ test_dir(system.file("tests", "", package = "abacus"))
 
 
 library(abacus)
+
+
+
+
+
+
+
+
 Create_testDB("test.db")
 
 db <- "db/test.db"

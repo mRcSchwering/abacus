@@ -7,6 +7,7 @@
 #' A \code{WHERE} condition can be added with arguments \code{eq} (equal), \code{ge} (greater-equal), \code{le} (lesser-equal).
 #' Conditions are given as list for the desired relation. The name of a list element defines a column and its value the value.
 #' Multiple \code{ge} and \code{se} conditions are combined by \code{AND} and \code{eq} conditions by \code{OR}.
+#' With \code{all_and} set to \code{TRUE} everything is combined with \code{AND}.
 #' 
 #' You can set \code{check_query} to \code{TRUE} to see the query.
 #'
@@ -20,6 +21,7 @@
 #'                              Element name specifies column, value its value (see details)
 #' @param le                   \code{list} (\code{NULL}) defining a condition with \code{<=} (lesser-equal). . 
 #'                              Element name specifies column, value its value (see details)
+#' @param all_and              \code{bool} (\code{FALSE}) whether all conditions are combined with \code{AND}
 #' @param enforce_foreign_keys \code{bool} (\code{TRUE}) whether to enforce rules on foreign keys
 #' @param check_query          \code{bool} (\code{FALSE}) whether to just return the SQL query without actually sending it
 #'
@@ -32,7 +34,8 @@
 #'
 #' @export
 #'
-Select <- function( table, db, eq = NULL, ge = NULL, le = NULL, enforce_foreign_keys = TRUE, check_query = FALSE )
+Select <- function( table, db, eq = NULL, ge = NULL, le = NULL, all_and = FALSE, 
+                    enforce_foreign_keys = TRUE, check_query = FALSE )
 {
   stopifnot(table %in% c("accounts", "transactions", "capital", "personalAccounts", "cashflow", "storage"))
   
@@ -76,6 +79,7 @@ Select <- function( table, db, eq = NULL, ge = NULL, le = NULL, enforce_foreign_
   # conditions
   where <- NULL
   if( any(!c(is.null(eq), is.null(ge), is.null(le))) ){
+    all_and <- if(all_and) " AND " else " OR "
     ands <- NULL
     ors <- NULL
     
@@ -106,7 +110,7 @@ Select <- function( table, db, eq = NULL, ge = NULL, le = NULL, enforce_foreign_
 
     # combine
     if(!is.null(ands)) ands <- paste(ands, collapse = " AND ")
-    if(!is.null(ors)) ors <- paste(ors, collapse = " OR ")
+    if(!is.null(ors)) ors <- paste(ors, collapse = all_and)
     where <- paste(c(ands, ors), collapse = " AND ")
   }
 

@@ -31,7 +31,8 @@ SelectBLOB("test2", db)
 }
 \seealso{
 Other SQLite handler functions: \code{\link{Insert}},
-  \code{\link{SelectBLOB}}, \code{\link{Select}},
-  \code{\link{UpdateBLOB}}, \code{\link{Update}}
+  \code{\link{Intersect}}, \code{\link{SelectBLOB}},
+  \code{\link{Select}}, \code{\link{UpdateBLOB}},
+  \code{\link{Update}}
 }
 

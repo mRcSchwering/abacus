@@ -22,15 +22,18 @@ UpdateBLOB(name, data, db, table = "storage")
 Convenience function to write any kind of object into a SQLite table.
 }
 \examples{
-Create_testDB("./db")
-x <- list(a = 1:5, b = list(c = c("a", "b")))
-InsertBLOB("test2", x, db)
-SelectBLOB("test2", db)
+db <- "db/test.db"
+Create_testDB(db)
+d <- list(test = "some test")
+InsertBLOB("test3", list(a = 1:10, b = list(a = letters)), db)
+UpdateBLOB("test3", d, db)
+d2 <- SelectBLOB("test3", db)
 
 }
 \seealso{
 Other SQLite handler functions: \code{\link{InsertBLOB}},
-  \code{\link{Insert}}, \code{\link{SelectBLOB}},
-  \code{\link{Select}}, \code{\link{Update}}
+  \code{\link{Insert}}, \code{\link{Intersect}},
+  \code{\link{SelectBLOB}}, \code{\link{Select}},
+  \code{\link{Update}}
 }
 

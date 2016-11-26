@@ -34,7 +34,8 @@ Insert(df, "accounts", "db/test.db", add_id = TRUE)
 }
 \seealso{
 Other SQLite handler functions: \code{\link{InsertBLOB}},
-  \code{\link{SelectBLOB}}, \code{\link{Select}},
-  \code{\link{UpdateBLOB}}, \code{\link{Update}}
+  \code{\link{Intersect}}, \code{\link{SelectBLOB}},
+  \code{\link{Select}}, \code{\link{UpdateBLOB}},
+  \code{\link{Update}}
 }
 
