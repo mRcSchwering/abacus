@@ -42,10 +42,10 @@ Update <- function( data, table, check, db, enforce_foreign_keys = TRUE )
     query <- sprintf("UPDATE %s SET %s WHERE %s", table, cols, wheres[i])
 
     # write db
-    con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname = db)
-    if( enforce_foreign_keys ) RSQLite::dbGetQuery(con, "PRAGMA foreign_keys = ON;")
-    RSQLite::dbGetPreparedQuery(con, query, data[i, ])
-    RSQLite::dbDisconnect(con)
+    con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db)
+    if( enforce_foreign_keys ) DBI::dbGetQuery(con, "PRAGMA foreign_keys = ON;")
+    DBI::dbGetQuery(con, query, params = lapply(names(data), function(x) data[[x]][i]))
+    DBI::dbDisconnect(con)
   }
   return(TRUE)
 } 

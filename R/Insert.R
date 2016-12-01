@@ -27,16 +27,17 @@ Insert <- function( data, table, db, add_id = FALSE, enforce_foreign_keys = TRUE
   stopifnot(inherits(data, "data.frame"))
   
   # connect, set PRAGMA
-  con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname = db)
-  if( enforce_foreign_keys ) RSQLite::dbGetQuery(con, "PRAGMA foreign_keys = ON;")
+  con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db)
+  if( enforce_foreign_keys ) DBI::dbGetQuery(con, "PRAGMA foreign_keys = ON;")
   
   # write in db
   cols <- paste0("@", names(data), collapse = ", ")
   if( add_id ) cols <- paste("NULL", cols, sep = ", ")
-  RSQLite::dbGetPreparedQuery(con, sprintf("INSERT INTO %s VALUES (%s)", table, cols), data)
+  DBI::dbGetQuery(con, sprintf("INSERT INTO %s VALUES (%s)", table, cols), 
+                  params = lapply(names(data), function(x) data[[x]]))
   
   # disconnect
-  RSQLite::dbDisconnect(con)
+  DBI::dbDisconnect(con)
   return(TRUE)
 } 
 

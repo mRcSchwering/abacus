@@ -25,8 +25,8 @@ Create_testDB <- function( dbName = "~/data/test.db" )
   cmds <- apply(idx, 2, function(x) paste(schema[x[2]:x[1]], collapse = "\n"))
   
   # create database
-  con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname = dbName)
-  for(i in cmds) RSQLite::dbGetQuery(con, i)
+  con <- DBI::dbConnect(RSQLite::SQLite(), dbname = dbName)
+  for(i in cmds) DBI::dbGetQuery(con, i)
   
   # insert test data
   Insert(abacus::accounts, "accounts", dbName, add_id = TRUE)

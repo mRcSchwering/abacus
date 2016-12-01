@@ -119,14 +119,14 @@ Select <- function( table, db, eq = NULL, ge = NULL, le = NULL, all_and = FALSE,
   if( check_query ) return(query)
 
   # connect, set PRAGMA
-  con <- RSQLite::dbConnect(RSQLite::SQLite(), dbname = db)
-  if( enforce_foreign_keys ) RSQLite::dbGetQuery(con, "PRAGMA foreign_keys = ON;")
+  con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db)
+  if( enforce_foreign_keys ) DBI::dbGetQuery(con, "PRAGMA foreign_keys = ON;")
   
   # get query
-  res <- RSQLite::dbGetQuery(con, query)
+  res <- DBI::dbGetQuery(con, query)
   
   # disconnect
-  RSQLite::dbDisconnect(con)
+  DBI::dbDisconnect(con)
   return(res)
 } 
 
@@ -160,7 +160,7 @@ SelectBLOB <- function( name, db )
   stopifnot(inherits(name, "character"), length(name) == 1)
   
   # select
-  df <- Select("storage", db, eq = list(name = name))
+  df <- abacus::Select("storage", db, eq = list(name = name))
   if(nrow(df) < 1) return(NULL)
   
   # retrieve data

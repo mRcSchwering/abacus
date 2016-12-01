@@ -19,6 +19,8 @@ library(abacus)
 
 Create_testDB("test.db")
 
+
+
 db <- "db/test.db"
 params <- list(nFeats = 200, DDL = FALSE, time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1")))
 InsertBLOB("params", params, db)

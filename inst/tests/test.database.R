@@ -1,6 +1,11 @@
 library(abacus)
 library(RSQLite)
 
+
+
+
+
+
 context("Creating, writing and reading the test database")
 
 db <- "test.db"
@@ -13,7 +18,7 @@ test_that("Create_testDB()", {
 
 test_that("test.db contents", {
   con <- dbConnect(SQLite(), dbname = db)
-  df <- dbGetQuery(con,  "SELECT * FROM sqlite_master") # WHERE tbl_name = 'accounts'")
+  df <- dbGetQuery(con,  "SELECT * FROM sqlite_master")
   dbDisconnect(con)
   expect_equal(df$type, c("table", "index", "table", "index", "index", "table", "index", "table", "index", "table", "table", "index"))
   expect_equal(df$name, c("accounts", "uq_accounts", "transactions", "transact_payor_index", "transact_payee_index", "capital", 
@@ -25,7 +30,7 @@ test_that("test.db contents", {
 test_that("write db", {
   
   # with add_id
-  df <- data.frame(owner = "Harry G", iban = "ASDF1234", bic = "ASD1234", stringsAsFactors = FALSE)
+  df <- data.frame(owner = "Harry G", iban = "ASDFasd234", bic = "ASD1234", stringsAsFactors = FALSE)
   expect_true(Insert(df, "accounts", db, add_id = TRUE))
   con <- dbConnect(SQLite(), dbname = db)
   df2 <- dbGetQuery(con, "SELECT * FROM accounts WHERE id > 100")
