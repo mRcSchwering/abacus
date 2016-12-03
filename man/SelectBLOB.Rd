@@ -4,12 +4,14 @@
 \alias{SelectBLOB}
 \title{SelectBLOB}
 \usage{
-SelectBLOB(name, db)
+SelectBLOB(name, db, table = "storage")
 }
 \arguments{
 \item{name}{\code{chr} name of BLOB}
 
 \item{db}{\code{chr} full file name with path of database}
+
+\item{table}{\code{chr} (="storage") name of the storage table in db}
 }
 \value{
 \code{R} object selected

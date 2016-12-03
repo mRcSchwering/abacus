@@ -11,41 +11,19 @@ test_dir(system.file("tests", "", package = "abacus"))
 library(abacus)
 
 
+db <- "test.db"
+Create_testDB(db)
 
 
 
 
 
 
-Create_testDB("test.db")
 
 
 
-db <- "db/test.db"
-params <- list(nFeats = 200, DDL = FALSE, time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1")))
-InsertBLOB("params", params, db)
 
 
-#### Update Predictor
-# params müssen in db eingetragen sein
-
-params <- SelectBLOB("params", db)
-if( is.null(params) ) stop("No hyperparameters set")
-
-tas <- Select("transactions", db, ge = list(date = params$time$start), le = list(date = params$time$end))
-pas <- Select("personalAccounts", db)
-if( nrow(tas) < 1 ) stop("No transactions entered in database yet")
-if( nrow(pas) < 1 ) stop("No personal accounts entered in database yet")
-
-feats <- FeatureExtraction(tas, pas)
-trained <- Training(feats$ABT, tas$type, feats$FeatureList, n_max = params$nFeats, diag = params$DDL)
-
-
-InsertBLOB("params", params, db)
-
-dt <- pas[, c(1, 5)]
-names(dt) <- c("account", "type")
-Update(dt, "personalAccounts", "account", db)
 
 
 # create test.db

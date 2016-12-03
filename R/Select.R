@@ -143,6 +143,7 @@ Select <- function( table, db, eq = NULL, ge = NULL, le = NULL, all_and = FALSE,
 #'
 #' @param name                 \code{chr} name of BLOB
 #' @param db                   \code{chr} full file name with path of database
+#' @param table                \code{chr} (="storage") name of the storage table in db
 #'
 #' @return \code{R} object selected
 #'
@@ -155,12 +156,12 @@ Select <- function( table, db, eq = NULL, ge = NULL, le = NULL, all_and = FALSE,
 #'
 #' @export
 #'
-SelectBLOB <- function( name, db )
+SelectBLOB <- function( name, db, table = "storage" )
 {
   stopifnot(inherits(name, "character"), length(name) == 1)
   
   # select
-  df <- abacus::Select("storage", db, eq = list(name = name))
+  df <- abacus::Select(table, db, eq = list(name = name))
   if(nrow(df) < 1) return(NULL)
   
   # retrieve data
