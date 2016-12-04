@@ -10,7 +10,7 @@ Update_Predictor(db)
 \item{db}{\code{chr} the database used / file name and path of database}
 }
 \value{
-\code{TRUE} if sucessful, otherwise a \code{chr} message where the algorithm stopped
+\code{TRUE} if sucessful, otherwise a \code{chr} message where the algorithm stopped.
 }
 \description{
 The algorithm updates the prediction model according to the current database.
@@ -27,6 +27,10 @@ The algorithm updates the prediction model according to the current database.
  \item A \code{\link{Training}} is done with the resulting analytics base table.
  \item Table \emph{Storage} is updated with the resulting \emph{Model} and \emph{FeatureList}.
 }
+
+If there are to few transactions used for training, the predcitor might not work.
+It depends on how well the different types (labels) are represented, 
+but as a rule of thumb there should be a minimum of 20 transactions.
 }
 \examples{
 db <- "test.db"
@@ -38,5 +42,8 @@ Update_Predictor(db)
 feats <- SelectBLOB("FeatureList", db)
 model <- SelectBLOB("Model", db)
 
+}
+\seealso{
+Other procedures: \code{\link{Evaluate_Predictor}}
 }
 

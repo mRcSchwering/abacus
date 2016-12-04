@@ -26,6 +26,19 @@ test_that("Predictor Update", {
 })
 
 
+test_that("Predictor Evaluation", {
+  expect_error(Evaluate_Predictor(db)) # to few data points per nfold
+  params <- list(nFeats = 100, DDL = FALSE, time = list(start = as.Date("2010-1-1"), end = as.Date("2010-2-1")))
+  expect_true(UpdateBLOB("Params", params, db))
+  expect_warning(Evaluate_Predictor(db))
+  ranks <- SelectBLOB("Ranking", db)
+  err <- SelectBLOB("Err", db)
+  expect_lte(nrow(ranks), 100)
+  expect_lte(nrow(err), 100)
+  expect_gte(sum(err$class == err$prediction) / 92, 0.9)
+  expect_identical(attr(ranks, "dimnames")[[2]][1:2], c("idx", "score"))
+})
+
 
 
 file.remove(db)

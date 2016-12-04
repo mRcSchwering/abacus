@@ -13,12 +13,16 @@
 #'  \item A \code{\link{Training}} is done with the resulting analytics base table.
 #'  \item Table \emph{Storage} is updated with the resulting \emph{Model} and \emph{FeatureList}.
 #' }
+#' 
+#' If there are to few transactions used for training, the predcitor might not work.
+#' It depends on how well the different types (labels) are represented, 
+#' but as a rule of thumb there should be a minimum of 20 transactions.
 #'
 #' @family procedures
 #'
 #' @param db   \code{chr} the database used / file name and path of database
 #' 
-#' @return \code{TRUE} if sucessful, otherwise a \code{chr} message where the algorithm stopped
+#' @return \code{TRUE} if sucessful, otherwise a \code{chr} message where the algorithm stopped.
 #' 
 #' @examples 
 #' db <- "test.db"
@@ -48,9 +52,9 @@ Update_Predictor <- function( db )
   
   rs <- FeatureExtraction(tas, pas)
   rs <- Training(rs$ABT, tas$type, rs$FeatureList, n_max = params$nFeats, diag = params$DDL)
+  
   ids <- c("Model", "FeatureList")
   exst <- Intersect(data.frame(name = ids), table, db)
-  
   for( i in 1:length(ids) ){
     if( exst[i] ){
       UpdateBLOB(ids[i], rs[[ids[i]]], db, table = "storage")

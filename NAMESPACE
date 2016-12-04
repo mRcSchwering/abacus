@@ -3,6 +3,7 @@
 export(CV)
 export(Convert)
 export(Create_testDB)
+export(Evaluate_Predictor)
 export(FeatureExtraction)
 export(Insert)
 export(InsertBLOB)

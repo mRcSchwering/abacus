@@ -14,7 +14,14 @@ library(abacus)
 db <- "test.db"
 Create_testDB(db)
 
+params <- list(nFeats = 200, DDL = FALSE, time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1")))
+InsertBLOB("Params", params, db)
 
+Evaluate_Predictor(db)
+
+err <- SelectBLOB("Err", db)
+ranks <- SelectBLOB("Ranking", db)
+sum(err$class == err$prediction)
 
 
 
