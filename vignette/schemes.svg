@@ -1617,8 +1617,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.5243566"
-     inkscape:cx="3552.9959"
-     inkscape:cy="2658.0616"
+     inkscape:cx="4007.839"
+     inkscape:cy="1855.1729"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -2749,15 +2749,15 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="4042.0576"
-       y="-2415.7019"
+       x="4448.27"
+       y="-1650.9552"
        id="text11196"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan11198"
-         x="4042.0576"
-         y="-2415.7019"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:'Adobe Helvetica';-inkscape-font-specification:'Adobe Helvetica';text-align:center;text-anchor:middle;fill:#4285f4;fill-opacity:1">TransactionsPredict</tspan></text>
+         x="4448.27"
+         y="-1650.9552"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:'Adobe Helvetica';-inkscape-font-specification:'Adobe Helvetica';text-align:center;text-anchor:middle;fill:#4285f4;fill-opacity:1">Predict_Transactions</tspan></text>
     <g
        id="g11304"
        transform="translate(-379.32986,0)">
@@ -4386,5 +4386,29 @@
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text5338"
+       y="-2041.9105"
+       x="4444.4561"
+       style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:'Adobe Helvetica';-inkscape-font-specification:'Adobe Helvetica';text-align:center;text-anchor:middle;fill:#4285f4;fill-opacity:1"
+         y="-2041.9105"
+         x="4444.4561"
+         id="tspan5340"
+         sodipodi:role="line">Read_Transactions</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5350"
+       y="-327.42844"
+       x="4547.4395"
+       style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:'Adobe Helvetica';-inkscape-font-specification:'Adobe Helvetica';text-align:center;text-anchor:middle;fill:#4285f4;fill-opacity:1"
+         y="-327.42844"
+         x="4547.4395"
+         id="tspan5352"
+         sodipodi:role="line">Write_Transactions</tspan></text>
   </g>
 </svg>

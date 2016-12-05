@@ -42,8 +42,15 @@ Update_Predictor <- function( db )
   if( identical(Intersect(data.frame(name = "Params"), table, db), FALSE) ) stop("Hyperparameters not set yet.")
   params <- SelectBLOB("Params", db, table = table)
   
-  geDate <- if( is.null(params$time$start) ) NULL else list(date = params$time$start)
-  leDate <- if( is.null(params$time$end) ) NULL else list(date = params$time$end)
+  if( !is.null(params$time$year) ){
+    d <- as.POSIXlt(Sys.Date())
+    leDate <- list(date = as.Date(d))
+    d$year <- d$year - params$time$year
+    geDate <- list(date = as.Date(d))
+  } else {
+    geDate <- if( is.null(params$time$start) ) NULL else list(date = params$time$start)
+    leDate <- if( is.null(params$time$end) ) NULL else list(date = params$time$end) 
+  }
   tas <- Select("transactions", db, ge = geDate, le = leDate)
   if( nrow(tas) < 1 ) return("No transactions in database for the provided time intervall")
   

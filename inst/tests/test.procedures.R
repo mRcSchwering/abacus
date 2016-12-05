@@ -23,10 +23,15 @@ test_that("Predictor Update", {
   expect_true(Update_Predictor(db))
   model <- SelectBLOB("Model", db)
   expect_equal(length(model$freqs), 5)
+  params <- list(nFeats = 200, DDL = FALSE, time = list(year = 2))
+  expect_true(UpdateBLOB("Params", params, db))
+  expect_identical(Update_Predictor(db), "No transactions in database for the provided time intervall")
 })
 
 
 test_that("Predictor Evaluation", {
+  params <- list(nFeats = 100, DDL = TRUE, time = list(start = as.Date("2010-1-1"), end = as.Date("2010-1-1")))
+  expect_true(UpdateBLOB("Params", params, db))
   expect_error(Evaluate_Predictor(db)) # to few data points per nfold
   params <- list(nFeats = 100, DDL = FALSE, time = list(start = as.Date("2010-1-1"), end = as.Date("2010-2-1")))
   expect_true(UpdateBLOB("Params", params, db))
