@@ -29,7 +29,7 @@
 #'
 Intersect <- function( data, table, db )
 {
-  stopifnot(table %in% c("accounts", "transactions", "cashflow", "storage"))
+  stopifnot(table %in% c("accounts", "transactions", "cashflow", "storage", "personalAccounts"))
   stopifnot(inherits(data, "data.frame"))
   
   data[] <- lapply(data, as.character)
@@ -40,12 +40,12 @@ Intersect <- function( data, table, db )
     for( i in 1:nrow(data) ){
       res <- Select(table, db, eq = as.list(data[i, c("iban", "bic")]), all_and = TRUE)
       dub <- append(dub, if( nrow(res) < 1 ) FALSE else TRUE)
-    }  
+    }
     
-    # nrows = very small
+  # nrows = very small
   } else if( table == "storage" || table == "personalAccounts" ){
     name <- switch(table, storage = "name", personalAccounts = "type")
-    res <- Select("storage", db)[[name]]
+    res <- Select(table, db)[[name]]
     dub <- data[[name]] %in% res
     
     # nrows = big and conditions not unique
