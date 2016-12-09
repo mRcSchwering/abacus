@@ -1,6 +1,6 @@
 library(abacus)
 
-context("Procedures")
+context("Various procedures with test database")
 
 db <- "test.db"
 Create_testDB(db)
@@ -42,6 +42,24 @@ test_that("Predictor Evaluation", {
   expect_lte(nrow(err), 100)
   expect_gte(sum(err$class == err$prediction) / 92, 0.9)
   expect_identical(attr(ranks, "dimnames")[[2]][1:2], c("idx", "score"))
+})
+
+
+test_that("Update database with new transactions form file", {
+  f <- system.file("extdata", "test_transactions.csv", package = "abacus")
+  cols <- list(name = 6, iban = 7, bic = 8, date = 3, reference = 5, entry = 4, value = 9, currency = 10)
+  expect_error(Read_csv("giro1", f, cols, db)) # no such type in personalAccounts
+  tas <- Read_csv("giro", f, cols, db)
+  expect_identical(names(tas), c("Transactions", "Reference", "db"))
+  expect_equal(nrow(tas$Transactions), 15)
+  expect_equal(nrow(tas$Reference), 1)
+  tas <- Read(tas)
+  expect_true("NewAccounts" %in% names(tas))
+  expect_equal(nrow(tas$NewAccounts), 3)
+  expect_error(Predict(tas)) # cause last owner name has "."
+  tas$NewAccounts$owner[3] <- "New Owner 3"
+  pred <- Predict(tas)
+  expect_true("predicted type" %in% names(pred))
 })
 
 

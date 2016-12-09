@@ -4,13 +4,13 @@
 #'
 #' @family test.db functions
 #'
-#' @param dbName               \code{chr} (\code{"test"}) name of database / file (and path)
+#' @param dbName               \code{chr} (\code{"test.db"}) name of database / file (and path)
 #' 
 #' @return \code{TRUE} if successful
 #'
 #' @export
 #'
-Create_testDB <- function( dbName = "~/data/test.db" )
+Create_testDB <- function( dbName = "test.db" )
 {
   # get paths right
   dbName <- file.path(getwd(), dbName)

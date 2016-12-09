@@ -4,10 +4,10 @@
 \alias{Create_testDB}
 \title{Create_testDB}
 \usage{
-Create_testDB(dbName = "~/data/test.db")
+Create_testDB(dbName = "test.db")
 }
 \arguments{
-\item{dbName}{\code{chr} (\code{"test"}) name of database / file (and path)}
+\item{dbName}{\code{chr} (\code{"test.db"}) name of database / file (and path)}
 }
 \value{
 \code{TRUE} if successful

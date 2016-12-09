@@ -42,6 +42,7 @@ Update_Predictor <- function( db )
   if( identical(Intersect(data.frame(name = "Params"), table, db), FALSE) ) stop("Hyperparameters not set yet.")
   params <- SelectBLOB("Params", db, table = table)
   
+  # select transactions according to parameters
   if( !is.null(params$time$year) ){
     d <- as.POSIXlt(Sys.Date())
     leDate <- list(date = as.Date(d))
@@ -54,12 +55,15 @@ Update_Predictor <- function( db )
   tas <- Select("transactions", db, ge = geDate, le = leDate)
   if( nrow(tas) < 1 ) return("No transactions in database for the provided time intervall")
   
+  # select personal Accounts
   pas <- Select("personalAccounts", db)
   if( nrow(pas) < 1 ) return("No personalAccounts in database")
   
+  # Feature extraction and training
   rs <- FeatureExtraction(tas, pas)
   rs <- Training(rs$ABT, tas$type, rs$FeatureList, n_max = params$nFeats, diag = params$DDL)
   
+  # Insert/Update Predictor
   ids <- c("Model", "FeatureList")
   exst <- Intersect(data.frame(name = ids), table, db)
   for( i in 1:length(ids) ){

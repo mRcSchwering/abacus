@@ -46,6 +46,7 @@ Evaluate_Predictor <- function( db, nFold = 5 )
   Update_Predictor(db)
   params <- SelectBLOB("Params", db)
   
+  # select transactions according to parameters
   if( !is.null(params$time$year) ){
     d <- as.POSIXlt(Sys.Date())
     leDate <- list(date = as.Date(d))
@@ -58,15 +59,18 @@ Evaluate_Predictor <- function( db, nFold = 5 )
   tas <- Select("transactions", db, ge = geDate, le = leDate)
   if( nrow(tas) < 1 ) return("No transactions in database for the provided time intervall")
   
+  # select personal Accounts
   pas <- Select("personalAccounts", db)
   if( nrow(pas) < 1 ) return("No personalAccounts in database")
   
+  # Feature extraction, CV and ranking
   rs <- FeatureExtraction(tas, pas)
   err <- CV(rs$ABT, rs$FeatureList, tas$type, k = nFold, n_max = params$nFeats, diag = params$DDL)
   ranks <- sda::sda.ranking(rs$ABT, tas$type, diagonal = params$DDL, verbose = FALSE)
   if( nrow(ranks) > params$nFeats ) ranks <- ranks[1:params$nFeats, ]
   rs <- list(Err = err, Ranking = ranks)
   
+  # Insert/Update Evaluation
   ids <- c("Err", "Ranking")
   exst <- Intersect(data.frame(name = ids), "storage", db)
   for( i in 1:length(ids) ){
