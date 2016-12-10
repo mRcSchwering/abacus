@@ -67,43 +67,43 @@ for( i in 1:nrow(trans) ){
     trans$payee[i] <- sample(which(konten$type == "cash"), 1)
     trans$reference[i] <- sample(c("EC 97749000DE992", "credit 83900021AF0029"), 1)
     trans$entry[i] <- sample(c("cashpoint", "teller", "auto teller", "cash terminal"), 1)
-    trans$value[i] <- sample(c(20, 40, 60), 1)
+    trans$value[i] <- sample(c(2000, 4000, 6000), 1)
   } else if( trans$type[i] == "food" ){
     trans$payor[i] <- 1
     trans$payee[i] <- sample(which(konten$type == "food"), 1)
     trans$reference[i] <- sample(c("Thanks, Aldi", "Rewe says thanks", "REWE", "Penny"), 1)
     trans$entry[i] <- sample(c("debit", "debit withdrawal", "debit entry", "debit note"), 1)
-    trans$value[i] <- rnorm(1,25, 5)
+    trans$value[i] <- rnorm(1,2500, 500)
   } else if( trans$type[i] == "purchase" ){
     trans$payor[i] <- 1
     trans$payee[i] <- sample(which(konten$type == "purchase"), 1)
     trans$reference[i] <- sample(c("Thanks, Kaufland", "Kaufland says thanks", "MUELLER", "Depot"), 1)
     trans$entry[i] <- sample(c("debit", "debit withdrawal", "debit entry", "debit note"), 1)
-    trans$value[i] <- rnorm(1,35, 5)
+    trans$value[i] <- rnorm(1,3500, 500)
   } else if( trans$type[i] == "health/medicine" ){
     trans$payor[i] <- 1
     trans$payee[i] <- sample(which(konten$type == "health"), 1)
     trans$reference[i] <- sample(c("Star Pharmacy", "StLouis Hospital", "Cross Pharm"), 1)
     trans$entry[i] <- sample(c("debit", "debit withdrawal", "debit entry", "debit note"), 1)
-    trans$value[i] <- rnorm(1,45, 5)
+    trans$value[i] <- rnorm(1,4500, 500)
   } else if( trans$type[i] == "clothing" ){
     trans$payor[i] <- 1
     trans$payee[i] <- sample(which(konten$type == "cloth"), 1)
     trans$reference[i] <- sample(c("H+M", "MarcOPolo", "HM"), 1)
     trans$entry[i] <- sample(c("debit", "debit withdrawal", "debit entry", "debit note"), 1)
-    trans$value[i] <- rnorm(1,55, 5)
+    trans$value[i] <- rnorm(1,5500, 500)
   } else if( trans$type[i] == "savings withdrawal" ){
     trans$payor[i] <- 2
     trans$payee[i] <- 1
     trans$reference[i] <- sample(c("vacation", "migrate", "backup"), 1)
     trans$entry[i] <- "transaction"
-    trans$value[i] <- sample(c(200, 500, 1000), 1)
+    trans$value[i] <- sample(c(20000, 50000, 100000), 1)
   } else if( trans$type[i] == "savings" ){
     trans$payor[i] <- 1
     trans$payee[i] <- 2
     trans$reference[i] <- sample(c("savings", "invest", "for depot", "for daily"), 1)
     trans$entry[i] <- "transaction"
-    trans$value[i] <- sample(c(500, 1000), 1)
+    trans$value[i] <- sample(c(50000, 100000), 1)
   }
 }
 

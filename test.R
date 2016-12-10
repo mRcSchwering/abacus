@@ -20,6 +20,11 @@ Create_testDB(db)
 params <- list(nFeats = 200, DDL = FALSE, time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1")))
 InsertBLOB("Params", params, db)
 
+Evaluate_Predictor(db)
+err <- SelectBLOB("Err", db)
+ranks <- SelectBLOB("Ranking", db)
+
+
 f <- system.file("extdata", "test_transactions.csv", package = "abacus")
 cols <- list(name = 6, iban = 7, bic = 8, date = 3, reference = 5, entry = 4, value = 9, currency = 10)
 tas <- Read_csv("giro", f, cols, db)
