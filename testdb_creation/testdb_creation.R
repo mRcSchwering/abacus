@@ -112,6 +112,7 @@ for( i in 1:nrow(trans) ){
 accounts <- konten
 accounts$type <- NULL
 transactions <- trans
+transactions$value <- as.integer(transactions$value)
 personalAccounts <- persKonten
 
 save(accounts, file = "accounts.rda")

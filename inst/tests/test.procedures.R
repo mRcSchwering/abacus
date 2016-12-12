@@ -12,7 +12,7 @@ test_that("Predictor Update", {
   expect_warning(Update_Predictor(db))
   feats <- SelectBLOB("FeatureList", db)
   expect_equal(nrow(feats), 200)
-  expect_equal(feats$value[1:4] == c("debit", "transaction", "se1e", "tressa denham"), c(T,T,T,T))
+  expect_equal(feats$value[1:4] == c("debit", "transaction", "mod50", "mod100"), c(T,T,T,T))
   params <- list(nFeats = 100, DDL = TRUE, time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1")))
   expect_true(UpdateBLOB("Params", params, db))
   expect_true(Update_Predictor(db))
