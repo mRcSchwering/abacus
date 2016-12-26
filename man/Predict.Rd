@@ -12,7 +12,9 @@ Generic function for making a prediction with certain objects.
 \emph{Transactions} object (created with \code{\link{Read.Transactions}} for example).
 }
 \seealso{
-Other procedures: \code{\link{Evaluate_Predictor}},
+Other procedures: \code{\link{Duplicated.Transactions}},
+  \code{\link{Duplicated}},
+  \code{\link{Evaluate_Predictor}},
   \code{\link{Predict.Transactions}},
   \code{\link{Read.Transactions}}, \code{\link{Read_csv}},
   \code{\link{Read}}, \code{\link{Update_Predictor}}

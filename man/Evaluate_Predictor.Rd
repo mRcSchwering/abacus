@@ -50,7 +50,9 @@ ranks <- SelectBLOB("Ranking", db)
 
 }
 \seealso{
-Other procedures: \code{\link{Predict.Transactions}},
+Other procedures: \code{\link{Duplicated.Transactions}},
+  \code{\link{Duplicated}},
+  \code{\link{Predict.Transactions}},
   \code{\link{Predict}}, \code{\link{Read.Transactions}},
   \code{\link{Read_csv}}, \code{\link{Read}},
   \code{\link{Update_Predictor}}

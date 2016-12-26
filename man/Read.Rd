@@ -11,7 +11,9 @@ Generic function for reading objects.
 \code{\link{Read.Transactions}} is used to read a \emph{Transactions} object (created with \code{\link{Read_csv}} for example).
 }
 \seealso{
-Other procedures: \code{\link{Evaluate_Predictor}},
+Other procedures: \code{\link{Duplicated.Transactions}},
+  \code{\link{Duplicated}},
+  \code{\link{Evaluate_Predictor}},
   \code{\link{Predict.Transactions}},
   \code{\link{Predict}}, \code{\link{Read.Transactions}},
   \code{\link{Read_csv}}, \code{\link{Update_Predictor}}

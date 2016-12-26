@@ -8,10 +8,6 @@ test_dir(system.file("tests", "", package = "abacus"))
 
 
 
-
-
-
-
 library(abacus)
 
 db <- "test.db"
@@ -19,112 +15,40 @@ Create_testDB(db)
 
 params <- list(nFeats = 200, DDL = FALSE, time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1")))
 InsertBLOB("Params", params, db)
-
-Evaluate_Predictor(db)
-err <- SelectBLOB("Err", db)
-ranks <- SelectBLOB("Ranking", db)
-
+Update_Predictor(db)
 
 f <- system.file("extdata", "test_transactions.csv", package = "abacus")
 cols <- list(name = 6, iban = 7, bic = 8, date = 3, reference = 5, entry = 4, value = 9, currency = 10)
 tas <- Read_csv("giro", f, cols, db)
-
 tas <- Read(tas)
-
-
-
-
-Predict(tas) # error cause last owner has "."
 tas$NewAccounts$owner[3] <- "New Owner 3"
+tas <- Predict(tas)
 
-df <- Predict(tas)
-DT::datatable(df)
+tas <- Duplicated(tas)
+m <- cbind(tas$Transactions,tas$Duplicated)
+names(m)[9:10] <- c("exists in db", "with type")
+DT::datatable(m)
 
+##
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Evaluate_Predictor(db)
-
-err <- SelectBLOB("Err", db)
-ranks <- SelectBLOB("Ranking", db)
-sum(err$class == err$prediction)
-
-
-
-
-
-
-
-
-
-
-
-# create test.db
-Create_testDB("./db")
-
-
-tas <- Select("transactions", "db/test.db")
-pas <- Select("personalAccounts", "db/test.db")
-labs <- tas$type
-
-res <- FeatureExtraction(tas, pas)
-abt <- res$ABT
-feats <- res$FeatureList
-
-res <- Train(abt, labs, feats)
-model <- res$Model
-ranks <- res$Ranking
-
-plot(ranks)
-summary(ranks)
-summary(model)
-
-new <- tas[-900:-1,]
-res <- FeatureExtraction(new, pas)
-abt2 <- res$ABT
-feats2 <- res$FeatureList
-
-pred <- Predict(model, abt2, feats2, feats)
-summary(pred)
-sum(pred$class == new$type) / length(pred$class) * 100
-
-
-
-CV
-sum(err$class == err$prediction) / nrow(err) * 100
-
-
-
-
-
-
-
-
-
-
-devtools::install()
 roxygen2::roxygenise()
+devtools::install()
+
+
+##
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -10,8 +10,14 @@
 \item{x}{\code{Transactions} object (created with \code{\link{Read.Transactions}} for example)}
 }
 \value{
-\code{data.frame} with transactions combined with accounts.
-If a prediction model was available, it has an additional column \emph{predicted type} with predictions.
+\code{Transactions} object, a list of 4 elements:
+\itemize{
+    \item \emph{Transactions} a data.frame of the file that was read
+    \item \emph{Reference} a data.frame of the reference account
+    \item \emph{db} character of database used
+    \item \emph{Prediction} a data.frame of transactions with additional columns of account information.
+          It includes a column with the predicted type of each transaction.
+}
 }
 \description{
 This function uses a machine learning method to classify each type of transaction for a \emph{Transactions} object
@@ -47,9 +53,10 @@ pred <- Predict(tas)
 
 }
 \seealso{
-Other procedures: \code{\link{Evaluate_Predictor}},
-  \code{\link{Predict}}, \code{\link{Read.Transactions}},
-  \code{\link{Read_csv}}, \code{\link{Read}},
-  \code{\link{Update_Predictor}}
+Other procedures: \code{\link{Duplicated.Transactions}},
+  \code{\link{Duplicated}},
+  \code{\link{Evaluate_Predictor}}, \code{\link{Predict}},
+  \code{\link{Read.Transactions}}, \code{\link{Read_csv}},
+  \code{\link{Read}}, \code{\link{Update_Predictor}}
 }
 

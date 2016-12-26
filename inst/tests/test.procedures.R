@@ -59,7 +59,34 @@ test_that("Update database with new transactions form file", {
   expect_error(Predict(tas)) # cause last owner name has "."
   tas$NewAccounts$owner[3] <- "New Owner 3"
   pred <- Predict(tas)
-  expect_true("predicted type" %in% names(pred))
+  expect_true("Prediction" %in% names(pred))
+  expect_true("predicted type" %in% names(pred$Prediction))
+  
+  # Duplicated function
+  expect_error(Duplicated(tas)) # doesnt have a prediction dataframe yet
+  
+  # No ta in db occuring
+  res <- Duplicated(pred)
+  expect_false(any(res$Duplicated$bool))
+  expect_false(any(res$Duplicated$type != ""))
+  
+  # all of 3 tas in db occuring
+  a <- Select("transactions", db, eq = list(date = "2010-12-30"))
+  names(a)[14] <- "predicted type"
+  tas_a <- tas
+  tas_a$Prediction <- a
+  res <- Duplicated(tas_a)
+  expect_false(any(!res$Duplicated$bool))
+  expect_equal(sum(res$Duplicated$type == c("savings", "cash withdrawal", "cash withdrawal")), 3)
+  
+  # 1 ta in db occuring
+  a <- Select("transactions", db, eq = list(date = "2010-12-29"))
+  names(a)[14] <- "predicted type"
+  tas_a <- tas
+  tas_a$Prediction <- a
+  res <- Duplicated(tas_a)
+  expect_true(res$Duplicated$bool)
+  expect_true(res$Duplicated$type == "purchase")
 })
 
 

@@ -33,7 +33,9 @@ tas <- Read(tas)
 
 }
 \seealso{
-Other procedures: \code{\link{Evaluate_Predictor}},
+Other procedures: \code{\link{Duplicated.Transactions}},
+  \code{\link{Duplicated}},
+  \code{\link{Evaluate_Predictor}},
   \code{\link{Predict.Transactions}},
   \code{\link{Predict}}, \code{\link{Read_csv}},
   \code{\link{Read}}, \code{\link{Update_Predictor}}

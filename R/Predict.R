@@ -37,8 +37,15 @@ Predict <- function (x, ...) {
 #'
 #' @param x          \code{Transactions} object (created with \code{\link{Read.Transactions}} for example)
 #' 
-#' @return \code{data.frame} with transactions combined with accounts.
-#' If a prediction model was available, it has an additional column \emph{predicted type} with predictions.
+#' @return 
+#' \code{Transactions} object, a list of 4 elements:
+#' \itemize{
+#'     \item \emph{Transactions} a data.frame of the file that was read
+#'     \item \emph{Reference} a data.frame of the reference account
+#'     \item \emph{db} character of database used
+#'     \item \emph{Prediction} a data.frame of transactions with additional columns of account information.
+#'           It includes a column with the predicted type of each transaction.
+#' }
 #' 
 #' @examples 
 #' db <- "test.db"
@@ -73,6 +80,7 @@ Predict.Transactions <- function( x )
       x$Transactions$name[idx] <- x$NewAccounts$owner[i] 
     }
   }
+  x$NewAccounts <- NULL
   
   # build df by combining transactions with accounts
   # sign of value decides payor and payee
@@ -101,7 +109,11 @@ Predict.Transactions <- function( x )
   
   # if prediction cannot be done, return transactions
   nms <- c("Model", "FeatureList")
-  if( any(!Intersect(data.frame(name = nms), "storage", x$db)) ) return(df)
+  if( any(!Intersect(data.frame(name = nms), "storage", x$db)) ){
+    df[["predicted type"]] <- ""
+    x[["Prediction"]] <- df
+    return(x)
+  }
   
   # feature extraction and prediction
   pas <- Select("personalAccounts", x$db)
@@ -113,6 +125,8 @@ Predict.Transactions <- function( x )
   # propose prediction
   df <- cbind(df, pred$class)
   names(df)[14] <- "predicted type"
-  return(df)
+  
+  x[["Prediction"]] <- df
+  return(x)
 }
 
