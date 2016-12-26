@@ -14,6 +14,7 @@ are already present in the database.
 }
 \seealso{
 Other procedures: \code{\link{Duplicated.Transactions}},
+  \code{\link{Enter.Transactions}}, \code{\link{Enter}},
   \code{\link{Evaluate_Predictor}},
   \code{\link{Predict.Transactions}},
   \code{\link{Predict}}, \code{\link{Read.Transactions}},

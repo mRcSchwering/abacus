@@ -66,17 +66,17 @@ Duplicated <- function (x, ...) {
 #' tas <- Predict(tas)
 #' 
 #' tas <- Duplicated(tas)
-#' m <- cbind(tas$Transactions,tas$Duplicated)
-#' names(m)[9:10] <- c("exists in db", "with type")
+#' m <- cbind(tas$Prediction,tas$Duplicated)
+#' names(m)[15:16] <- c("exists in db", "with type")
 #' DT::datatable(m)
 #' 
 #' @export
 #'
 Duplicated.Transactions <- function( x )
 {
-  if( !"Prediction" %in% names(x) ) stop("Please predict transaction types with function Predict first")
+  if( !"Prediction" %in% names(x) ) stop("Predict transaction types with function Predict first")
   preds <- x$Prediction$`predicted type`
-  if( any(is.null(preds)) || any(preds == "") ) stop("Please enter a type for each transaction first")
+  if( any(is.null(preds)) || any(preds == "") ) stop("Enter a type for each transaction first")
   
   # select transactions with same date
   test <- x$Prediction

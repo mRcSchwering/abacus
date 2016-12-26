@@ -25,9 +25,16 @@ tas$NewAccounts$owner[3] <- "New Owner 3"
 tas <- Predict(tas)
 
 tas <- Duplicated(tas)
-m <- cbind(tas$Transactions,tas$Duplicated)
-names(m)[9:10] <- c("exists in db", "with type")
+m <- cbind(tas$Prediction,tas$Duplicated)
+names(m)[15:16] <- c("exists in db", "with type")
 DT::datatable(m)
+
+res <- Select("transactions", db, ge = list(date = "2011-1-1"))
+
+
+
+
+
 
 ##
 

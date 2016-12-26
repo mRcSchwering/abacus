@@ -54,13 +54,14 @@ tas$NewAccounts$owner[3] <- "New Owner 3"
 tas <- Predict(tas)
 
 tas <- Duplicated(tas)
-m <- cbind(tas$Transactions,tas$Duplicated)
-names(m)[9:10] <- c("exists in db", "with type")
+m <- cbind(tas$Prediction,tas$Duplicated)
+names(m)[15:16] <- c("exists in db", "with type")
 DT::datatable(m)
 
 }
 \seealso{
 Other procedures: \code{\link{Duplicated}},
+  \code{\link{Enter.Transactions}}, \code{\link{Enter}},
   \code{\link{Evaluate_Predictor}},
   \code{\link{Predict.Transactions}},
   \code{\link{Predict}}, \code{\link{Read.Transactions}},

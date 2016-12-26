@@ -46,6 +46,8 @@ test_that("Predictor Evaluation", {
 
 
 test_that("Update database with new transactions form file", {
+  
+  # read file and extract info
   f <- system.file("extdata", "test_transactions.csv", package = "abacus")
   cols <- list(name = 6, iban = 7, bic = 8, date = 3, reference = 5, entry = 4, value = 9, currency = 10)
   expect_error(Read_csv("giro1", f, cols, db)) # no such type in personalAccounts
@@ -56,6 +58,8 @@ test_that("Update database with new transactions form file", {
   tas <- Read(tas)
   expect_true("NewAccounts" %in% names(tas))
   expect_equal(nrow(tas$NewAccounts), 3)
+  
+  # Predict function
   expect_error(Predict(tas)) # cause last owner name has "."
   tas$NewAccounts$owner[3] <- "New Owner 3"
   pred <- Predict(tas)
@@ -67,8 +71,8 @@ test_that("Update database with new transactions form file", {
   
   # No ta in db occuring
   res <- Duplicated(pred)
-  expect_false(any(res$Duplicated$bool))
-  expect_false(any(res$Duplicated$type != ""))
+  expect_equal(sum(res$Duplicated$bool), 1)
+  expect_equal(sum(res$Duplicated$type == c(rep("", 14), "savings withdrawal")), 15)
   
   # all of 3 tas in db occuring
   a <- Select("transactions", db, eq = list(date = "2010-12-30"))
@@ -87,6 +91,18 @@ test_that("Update database with new transactions form file", {
   res <- Duplicated(tas_a)
   expect_true(res$Duplicated$bool)
   expect_true(res$Duplicated$type == "purchase")
+  
+  # Enter function
+  pred <- Duplicated(pred)
+  expect_true(Enter(pred))
+  res <- Select("transactions", db, ge = list(date = "2011-1-1"))
+  expect_equal(nrow(res), 15)
+  expect_true(res$type[15] == "savings withdrawal") # last element was not entered
+  
+  # enter duplicates again
+  expect_true(Enter(pred))
+  res <- Select("transactions", db, ge = list(date = "2011-1-1"))
+  expect_equal(nrow(res), 29)
 })
 
 

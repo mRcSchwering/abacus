@@ -14,6 +14,7 @@ Generic function for making a prediction with certain objects.
 \seealso{
 Other procedures: \code{\link{Duplicated.Transactions}},
   \code{\link{Duplicated}},
+  \code{\link{Enter.Transactions}}, \code{\link{Enter}},
   \code{\link{Evaluate_Predictor}},
   \code{\link{Predict.Transactions}},
   \code{\link{Read.Transactions}}, \code{\link{Read_csv}},

@@ -55,6 +55,7 @@ pred <- Predict(tas)
 \seealso{
 Other procedures: \code{\link{Duplicated.Transactions}},
   \code{\link{Duplicated}},
+  \code{\link{Enter.Transactions}}, \code{\link{Enter}},
   \code{\link{Evaluate_Predictor}}, \code{\link{Predict}},
   \code{\link{Read.Transactions}}, \code{\link{Read_csv}},
   \code{\link{Read}}, \code{\link{Update_Predictor}}
