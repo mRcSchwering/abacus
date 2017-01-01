@@ -7,7 +7,7 @@ Author: Marc Schwering
 Maintainer: Marc Schwering <schweringmarc01@gmail.com>
 Depends: R (>= 2.15.0)
 VignetteBuilder: knitr
-Suggests: knitr, rmarkdown, sda, RSQLite, DBI, shiny
+Suggests: knitr, rmarkdown, sda, RSQLite, DBI, shiny, shinydashboard, shinyjs, shinyBS
 Description: Collect and classify personal cash flows in a database contained in one file.
 License: What license is it under?
 LazyData: TRUE
