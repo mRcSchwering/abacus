@@ -2,6 +2,7 @@ library(abacus)
 
 context("Various procedures with test database")
 
+set.seed(42)
 db <- "test.db"
 Create_testDB(db)
 

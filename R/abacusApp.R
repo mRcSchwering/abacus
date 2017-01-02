@@ -46,12 +46,14 @@ abacusApp <- function( db )
               UploadModalUI("enter_tas", open_modal = "btn_enter_tas"),
               fluidRow(
                 box(title = "Settings",
-                    UploadSettingsUI("upload_tas"),
-                    actionButton("btn_enter_tas", "Enter"),
-                    textOutput("err_enter_tas")
+                    UploadSettingsUI("upload_tas")
                 ),
                 box(title = "Account Information",
-                    p("Reference Account")
+                    p("Reference Account"),
+                    p("The Information"),
+                    p("Explanation for entering"),
+                    actionButton("btn_enter_tas", "Enter"),
+                    textOutput("err_enter_tas")
                 )
               ),
               fluidRow(

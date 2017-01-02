@@ -30,13 +30,12 @@ UploadSettingsUI <- function( id )
   ns <- NS(id)
   
   out <- tagList(
-    uiOutput(ns("saved")),
+    div(style="display:inline-block", uiOutput(ns("saved"))),
+    div(style="display:inline-block", actionButton("btnSave", "Save")),
     br(),
     uiOutput(ns("settings")),
     br(),
-    fileInput(ns("upload"), "Upload Table", multiple = FALSE, accept = c("text", "csv")),
-    p("Take a look at file contents and reference account information.
-              If everything looks like expected continue by clicking ", strong("Enter"), ".")
+    fileInput(ns("upload"), "Upload Table", multiple = FALSE, accept = c("text", "csv"))
   )
   
   return(out)
@@ -86,24 +85,22 @@ UploadSettings <- function( input, output, session, db )
 {
   ns <- session$ns
   
-  # load saved settings (newest first)
-  settings <- SelectBLOB("Settings", "test.db")$upload
+  # load saved settings (newest first) and reference types
+  settings <- SelectBLOB("Settings", db)$upload
   settings <- rev(settings)
+  refAccounts <- Select("personalAccounts", db)$type
   
   # fallback in case nothing is saved
   if( is.null(settings) ){
     settings <- list(
       default = list(
         col = list(name = 6, iban = 7, bic = 8, date = 3, reference = 5, entry = 4, value = 9, currency = 10),
-        type = "giro"
+        type = "giro", date = "%d.%m.%Y", colSep = "\t", decSep = ",", head = TRUE, skip = 0, nMax = -1
       )
     )
   }
   
-  # personal account types
-  refAccounts <- Select("personalAccounts", db)$type
-  
-  # create ui for settings
+  # create ui for saved settings
   output$saved <- renderUI({
     choice <- names(settings)
     selectizeInput(ns("uploadSettings"), "Saved Settings", choice, selected = choice[1],
@@ -112,21 +109,19 @@ UploadSettings <- function( input, output, session, db )
   
   # create ui for defining upload settings
   output$settings <- renderUI({
-    selected <- input$uploadSettings
+    saved <- input$uploadSettings
+    saved <- if( !is.null(saved) && saved %in% names(settings) ) settings[[saved]] else NULL
     
-    # selection of reference account
-    if( !is.null(selected) && selected %in% names(settings) && settings[[selected]]$type %in% refAccounts ){
-      refChoices <- c(selected, refAccounts[refAccounts != selected])
-    } else {
-      refChoices <- refAccounts 
-    }  
-    sels <- selectizeInput(ns("accountType"), "Reference Account", refChoices, width = '200px', 
-            selected = refChoices[1], options = list(maxItems = 1, create = TRUE), multiple = FALSE)
-    sels <- div(style="display:inline-block", sels)
+    # selection for reference account
+    type <- if( !is.null(saved) ) saved$type else ""
+    selected <- if( type %in% refAccounts ) type else refAccounts[1]
+    ref <- selectizeInput(ns("accountType"), "Reference Account", refAccounts, width = '200px', 
+            selected = selected, options = list(maxItems = 1, create = TRUE), multiple = FALSE)
+    ref <- div(style="display:inline-block", ref)
 
     # column mappings
-    if( !is.null(selected) && selected %in% names(settings) ){
-      fileCols <- settings[[selected]]$col
+    if( !is.null(saved) ){
+      fileCols <- saved$col
     } else {
       fileCols <- list(name = 1, iban = 1, bic = 1, date = 1, reference = 1, entry = 1, value = 1, currency = 1)
     }
@@ -143,26 +138,35 @@ UploadSettings <- function( input, output, session, db )
     cols <- tagList(lapply(cols, function(x) div(style="display:inline-block", x)))
   
     # seperators
+    selected <- if( !is.null(saved) ) c(saved$colSeq, saved$decSep) else c("\t", ".")
     seps <- list(
-      selectInput(ns("colSep"), "column separator", list(tab = "\t", ";", ",", ":"), width = "100px"),
-      selectInput(ns("decSep"), "decimal separator", list(".", ","), width = "100px")
+      selectInput(ns("colSep"), "column separator", list(tab = "\t", ";", ",", ":"), selected = selected[1], width = "100px"),
+      selectInput(ns("decSep"), "decimal separator", list(".", ","), selected = selected[2], width = "100px")
     )
     seps <- tagList(lapply(seps, function(x) div(style="display:inline-block", x)))
     
     # skip lines
+    selected <- if( !is.null(saved) ) c(saved$skip, saved$nMax) else c(0, -1)
     skps <- list(
-      numericInput(ns("skip"), "skip lines", min = 0, value = 0, width = "60px"),
-      numericInput(ns("max"), "max lines", min = -1, value = -1, width = "60px")
+      numericInput(ns("skip"), "skip lines", min = 0, value = selected[1], width = "60px"),
+      numericInput(ns("max"), "max lines", min = -1, value = selected[2], width = "60px")
     )
     skps <- tagList(lapply(skps, function(x) div(style="display:inline-block", x)))
     
-    # other
-    hd <- checkboxInput(ns("hdBl"), "1st line as column names", value = TRUE)
+    # head row
+    selected <- if( !is.null(saved) ) saved$head else TRUE
+    hd <- checkboxInput(ns("hdBl"), "1st line as column names", value = selected)
     hd <- div(style="display:inline-block", hd)
+
+    # date formats
+    dateForms <- c("%d.%m.%Y", "%Y-%m-%d")
+    if( !is.null(saved) ) dateForms <- append(saved$date, dateForms)
+    dateForms <- as.list(dateForms)
+    dt <- selectizeInput(ns("dateFormat"), "date format", dateForms, selected = dateForms[[1]],
+                         options = list(maxItems = 1, create = TRUE), multiple = TRUE, width = "150px")
+    dt <- div(style="display:inline-block", dt)
     
-    style="margin-bottom: 3em;"
-    
-    tagList(div(sels, seps, hd), div(cols, skps))
+    tagList(div(ref, seps, hd), div(dt, cols, skps))
   })
   
   return(TRUE)
