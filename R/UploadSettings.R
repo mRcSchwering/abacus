@@ -45,16 +45,17 @@ UploadSettingsUI <- function( id )
       #", ns("btnSave"), " { margin-top: -27px; width: 70px; }
       #", ns("saved"), " { width: 200px; }
       .progress { height: 0px; }                              /* globally!!! */
-      .", ns("style_settings"), " { font-size: 10px; }
+      .", ns("style_settings"), " { border: 1px solid WhiteSmoke; padding: 5px; }
     "))
   ))
   
-  # ui elements
-  out <- tagList(
+  # input elements
+  el <- tagList(
     style,
     div(class = ns("style_mainBlock"), uiOutput(ns("saved"))),
     div(class = ns("style_mainBlock"), actionButton(ns("btnSave"), "Save", icon = icon("floppy-o"))),
-    div(class = ns("style_upload"), fileInput(ns("upload"), "Upload Table", multiple = FALSE, accept = c("text", "csv"))),
+    div(class = ns("style_upload"), id = ns("div_upload"),
+        fileInput(ns("upload"), "Upload Table", multiple = FALSE, accept = c("text", "csv"))),
     p("Above you can select settings you have already saved, below you can modify them."),
     br(),
     div(class = ns("style_settings"), uiOutput(ns("settings"))),
@@ -62,7 +63,84 @@ UploadSettingsUI <- function( id )
     verbatimTextOutput(ns("test"))
   )
   
-  return(out)
+  # tooltips
+  tt <- tagList(
+    shinyBS::bsPopover(ns("btnSave"), "Save Current Settings", paste(
+      "Saves the current settings. The settings name will be overwritten.",
+      "You can change the settings name with the selection on the left of this button.",
+      "Changes will take effect after the app was restarted."
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("uploadSettings"), "Saved Settings", paste(
+      "Here, you can chose upload settings that were already saved by their name.",
+      "You can save the current settings by clicking the button on the right.",
+      "This will overwrite the current setting name.",
+      "You can enter a new setting name by writing something into the box and clicking <b>add</b>.",
+      "Changes will take effect after the app was restarted."
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("div_upload"), "Upload Table with Transactions", paste(
+      "Upload a table (csv/text) with transactions.",
+      "Below you can change the upload settings.",
+      "If the table was uploaded correctly, you can proceed by clicking the <b>Enter Transactions</b> button.",
+      "If you have to use these upload settings more often, you can save them with the button on the left."
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("accountType"), "Reference Account Type", paste(
+      "To which of your accounts do these transactions belong to?"
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("nameCol"), "Name Column", paste(
+      "Which column in the table contains the account owner´s names?"
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("ibanCol"), "IBAN Column", paste(
+      "Which columns in the table contains the account IBAN?"
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("bicCol"), "BIC Column", paste(
+      "Which columns in the table contains the account BIC?"
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("dateCol"), "Date Column", paste(
+      "Which columns in the table contains the transaction date?"
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("referenceCol"), "Reference Column", paste(
+      "There usually is a reference text and a book entry text. Which column contains the reference text?"
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("entryCol"), "Book Entry Column", paste(
+      "There usually is a reference text and a book entry text. Which column contains the book entry text?"
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("valueCol"), "Value Column", paste(
+      "Which columns contains the transacted ammount?"
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("currencyCol"), "Currency Column", paste(
+      "Which column contains the currency symbol?"
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("colSep"), "Column Separator", paste(
+      "Every table uses a symbol to separate columns. Which one is used here?",
+      "If you don´t know, just try them out."
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("decSep"), "Decimal Separator", paste(
+      "In Germany decimals are separated by a comma, in other countries by a period.",
+      "Which one is needed here. You can just try out which one works.",
+      "If decimal numbers are preserved they were recognized correctly."
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("skip"), "Number of Lines to Skip", paste(
+      "Do the first lines contain some text which does not belong to the actual table?"
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("max"), "Maximum Number of Lines to Read", paste(
+      "Do the last lines contain some text which does not belong to the actual table?",
+      "<b>-1</b> to read all lines."
+    ), placement = "right"),
+    shinyBS::bsPopover(ns("hdBl"), "1st Line are Columns Names", paste(
+      "Often the 1st line are the column names. It does not contain actual values."
+    )),
+    shinyBS::bsPopover(ns("dateFormat"), "Date Formatting", paste(
+      "There are so many ways how dates are written. In the date column how is the date written?<br/>",
+      "The formatting works like this:<br/><b>%Y</b> is the year in 4 digits, <b>%y</b> in 2 digits,",
+      "<b>%m</b> is the month in 2 digits, <b>%d</b> is the day in 2 digits.",
+      "Write the date by replacing year, month, day.<br/>Examples:<br/>",
+      "<em>%d.%m.%Y</em> for 13.03.1990<br/>",
+      "<em>%Y-%m-%d</em> for 1990-03-13<br/>",
+      "<em>%Y/%m/%d</em> for 1990/03/13<br/>"
+    ), placement = "right")
+  )
+  
+  return(tagList(el, tt))
 }
 
 
@@ -156,17 +234,16 @@ UploadSettings <- function( input, output, session, db )
          numericInput(ns("referenceCol"), "reference", fileCols$reference, min = 1),
          numericInput(ns("entryCol"), "entry", fileCols$entry, min = 1),
          numericInput(ns("valueCol"), "value", fileCols$value, min = 1),
-         numericInput(ns("currencyCol"), "name", fileCols$currency, min = 1)       
+         numericInput(ns("currencyCol"), "currency", fileCols$currency, min = 1)       
     )
     cols <- tagList(lapply(cols, function(x) div(class = ns("style_cols"), x)))
   
     # seperators
     selected <- if( !is.null(saved) ) c(saved$colSep, saved$decSep) else c("\t", ".")
     seps <- list(
-      selectInput(ns("colSep"), "column separator", list(tab = "\t", ";", ",", ":"), selected = selected[1]),
-      selectInput(ns("decSep"), "decimal separator", list(".", ","), selected = selected[2])
+      selectInput(ns("colSep"), "col sep", list(tab = "\t", ";", ",", ":"), selected = selected[1]),
+      selectInput(ns("decSep"), "dec sep", list(".", ","), selected = selected[2])
     )
-
     seps <- tagList(lapply(seps, function(x) div(class = ns("style_seps"), x)))
     
     # skip lines
