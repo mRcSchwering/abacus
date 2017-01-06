@@ -33,34 +33,33 @@ abacus::abacusApp("test.db")
 
 
 # minimal app -------------------------------------------------------------
-modalTitle <- "Test Modal"
-nPages <- 4
+TestUI <- function(id) {
+  ns <- NS(id)
+  tagList(
+    bsModal(ns("modal"), "foo", trigger = "", "bar"),
+    actionButton(ns("button"), "Show modal")
+  )
+}
+Test <- function(input, output, session) {
+  ns <- session$ns
+  observeEvent(input$button, {
+    print("toggle")
+    toggleModal(session, "modal", "open")
+  })
+}
 
-ui <- fluidPage(
- 
+ui <- basicPage(
+  TestUI("test")
 )
 
-server <- function( input, output, session )
-{
- 
+server = function(input, output, session) {
+  callModule(Test, "test")
 }
 
 shinyApp(ui, server)
 
 
 
-
-
-
-
-
-ui <- fluidPage(shinyjs::useShinyjs(), 
-                
-      )
-server <- function(input, output, session) 
-  callModule(UploadModal, "enter_tas", open_module = reactive(input$show_modal))
-
-shinyApp(ui, server)
 
 
 
@@ -69,24 +68,30 @@ shinyApp(ui, server)
 
 
 
-ui <- fluidPage( TestUI("asd") )
+ui <- fluidPage( 
+  #TestUI("asd") 
+  uiOutput("uiOut")
+)
 
-server <- shinyServer(function(input, output, session) {})
+server <- shinyServer(function(input, output, session) {
+  #callModule(Test, "asd")
+  output$uiOut <- renderUI(popify(textInput("txt", "txt"),
+         "popify title", "content"))
+})
 
 shinyApp(ui, server)
 
 TestUI <- function(id) {
   ns <- NS(id)
   tagList(
-    div(fileInput(ns("test1"), "test"), id = ns("test3")),
-    textInput(ns("test2"), "asd"),
-    bsPopover(ns("test3"), "Name1","The wait times will be brny equally spaced bins"),
-    bsPopover(ns("test2"), "Name2","The wait times will be bris many equally spaced bins")
+    textInput(ns("test"), "test")
   )  
 }
 
-
-Test <- function(input, output, session) {}
+Test <- function(input, output, session) {
+  ns <- session$ns
+  shinyBS::addPopover(session, ns("test"), "Test", "content")
+}
 
 
 ######

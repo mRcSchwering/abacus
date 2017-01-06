@@ -58,7 +58,7 @@ abacusApp <- function( db )
               ),
               fluidRow(
                 box(title = "File Content", width = 12,
-                    p("File Showcase")
+                    verbatimTextOutput("tas")
                 )
               )
       )
@@ -77,8 +77,10 @@ abacusApp <- function( db )
     session$onSessionEnded(stopApp)
     db <- getOption("database_file")
     
-    # multiple pages modal
+    # File Upload
     tas <- callModule(UploadSettings, "upload_tas", db = db)
+    output$tas <- renderPrint(tas())
+    
     
     # multiple pages modal
     callModule(UploadModal, "enter_tas", db = db)
