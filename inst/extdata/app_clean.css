@@ -1,0 +1,34 @@
+/* skin */
+.content-wrapper, .right-side {
+    background-color: white;
+}
+.skin-blue .left-side,
+.skin-blue .main-sidebar,
+.skin-blue .wrapper {
+    background-color: #e6e6e6;
+}
+.skin-blue .main-header .logo,
+.skin-blue .main-header .navbar, 
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+    background-color: #4285f4;
+}
+.skin-blue .sidebar-menu > li.active > a,
+.skin-blue .sidebar-menu > li:hover > a {
+    background: #bfbfbf;
+    border-left-color: #4285f4;
+     color: black;
+}
+.skin-blue .sidebar a {
+    color: black;
+}
+
+
+/* error message color */
+.shiny-output-error-validation {
+    color: red;
+}
+
+/* boxes in general */
+.box {
+    min-height: 100px;
+}

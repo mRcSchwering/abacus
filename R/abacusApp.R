@@ -27,6 +27,11 @@ abacusApp <- function( db )
   # for some reason modals dont work if I just import shinyBS
   library(shinyBS)
   
+  # loading stylesheet
+  stylesheet <- paste(
+    scan(system.file("extdata", "app_clean.css", package = "abacus"), what = "", sep = "\n"), collapse = " ")
+  
+  
   # UI elements
   dashboard_sidebar <- dashboardSidebar(
     shinyjs::useShinyjs(),
@@ -41,6 +46,7 @@ abacusApp <- function( db )
   )
   
   dashboard_body <- dashboardBody(
+    tags$head(tags$style(HTML(stylesheet))),
     tabItems(
       tabItem("tab_enter_tas", 
               UploadModalUI("enter_tas", open_modal = "btn_enter_tas"),
@@ -48,17 +54,17 @@ abacusApp <- function( db )
                 box(title = "Settings",
                     UploadSettingsUI("upload_tas")
                 ),
-                box(title = "Account Information",
-                    p("Reference Account"),
-                    p("The Information"),
-                    p("Explanation for entering"),
+                column(6,
+                    h4("Reference Account"),
+                    uiOutput("uploadedReference"),
                     actionButton("btn_enter_tas", "Enter"),
+                    verbatimTextOutput("test"),
                     textOutput("err_enter_tas")
                 )
               ),
               fluidRow(
-                box(title = "File Content", width = 12,
-                    verbatimTextOutput("tas")
+                box(title = "File Content", width = 12, 
+                    DT::dataTableOutput("uploadedTable")
                 )
               )
       )
@@ -78,8 +84,22 @@ abacusApp <- function( db )
     db <- getOption("database_file")
     
     # File Upload
-    tas <- callModule(UploadSettings, "upload_tas", db = db)
-    output$tas <- renderPrint(tas())
+    # module for upload settings
+    # displaying uploaded transactions object
+    uploadedTas <- callModule(UploadSettings, "upload_tas", db = db)
+    output$uploadedTable <- DT::renderDataTable({
+      validate(need(!uploadedTas()$err, uploadedTas()$msg))
+      Table(uploadedTas()$tas$Transactions, dom = "t", class = "stripe hover", pageLen = 10)
+    })
+    output$uploadedReference <- renderUI({
+      validate(need(!uploadedTas()$err, uploadedTas()$msg))
+      HTML(sprintf(
+        "<dl><dt>Owner</dt><dd>%s</dd><dt>IBAN</dt><dd>%s</dd><dt>BIC</dt><dd>%s</dd><dt>Type</dt><dd>%s</dd></dl>",
+        uploadedTas()$tas$Reference$account_owner, uploadedTas()$tas$Reference$account_iban,
+        uploadedTas()$tas$Reference$account_bic, uploadedTas()$tas$Reference$type
+      ))
+    })
+    output$test <- renderPrint(uploadedTas()$tas$Reference)
     
     
     # multiple pages modal
