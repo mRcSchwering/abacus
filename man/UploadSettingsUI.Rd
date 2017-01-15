@@ -8,24 +8,40 @@ UploadSettingsUI(id)
 }
 \arguments{
 \item{id}{\code{chr} identifier used in shiny session}
-
-\item{open_modal}{\code{reactive} for triggering the modal (e.g. \code{\link{shiny::actionButton}})}
 }
 \value{
 \code{chr} html code of UI
 }
 \description{
-UploadModal is a modal with multiple pages for entering transactions into the database.
+UploadSettings module provides UI input elements and server logic for defining, saving and retrieving
+upload settings, and for uploading a csv table with transactions.
 }
 \details{
-This is the UI part of the modal.
-A modal with 4 pages is created.
-\enumerate{
-   \item Checking and correcting new accounts found in uploaded transactions
-   \item Checking and correcting predictions made by machine learning algorithm about new transactions
-   \item Noting whether duplicated transactions should be entered anyway
-   \item Confirming sucessful finish
+The UI consists of a row for settings selection and table upload, 
+some paragrpah with information, and a row for adjusting settings.
+All input elements have help texts (bsPopover).
+Most elements are rendered in the server part though.
+
+In the first row saved settings can be chosen by name in a selectize input
+or a new setting name can be entered. 
+A button next to it saves these settings (a modal will indicate success).
+There is a upload button or uploading csv or txt tables.
+
+In the second row, a lot of settings for reading and interpreting the table are located.
+These are numeric, select, selectize, and checkbox inputs.
+They cover:
+\itemize{
+   \item column numbers for all necessary information (like \emph{name}, \emph{IBAN}, \emph{date}...)
+   \item reference account of the uploaded transactions
+   \item date format used in the \emph{date} column of the table
+   \item decimal and column separators
+   \item whether the first line of the file contains column headings
+   \item how many lines should be skipped and the maximum number of lines to read in the uploaded file
 }
+
+Some basic css styles are defined within this module.
+They are always prefixed with the \code{id}.
+Best look into the source code of this function to see all the styles defined in the beginning.
 }
 \examples{
 

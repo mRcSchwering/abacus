@@ -1,20 +1,37 @@
 #' UploadSettingsUI
 #'
-#' UploadModal is a modal with multiple pages for entering transactions into the database.
+#' UploadSettings module provides UI input elements and server logic for defining, saving and retrieving
+#' upload settings, and for uploading a csv table with transactions.
 #' 
-#' This is the UI part of the modal.
-#' A modal with 4 pages is created.
-#' \enumerate{
-#'    \item Checking and correcting new accounts found in uploaded transactions
-#'    \item Checking and correcting predictions made by machine learning algorithm about new transactions
-#'    \item Noting whether duplicated transactions should be entered anyway
-#'    \item Confirming sucessful finish
+#' The UI consists of a row for settings selection and table upload, 
+#' some paragrpah with information, and a row for adjusting settings.
+#' All input elements have help texts (bsPopover).
+#' Most elements are rendered in the server part though.
+#' 
+#' In the first row saved settings can be chosen by name in a selectize input
+#' or a new setting name can be entered. 
+#' A button next to it saves these settings (a modal will indicate success).
+#' There is a upload button or uploading csv or txt tables.
+#' 
+#' In the second row, a lot of settings for reading and interpreting the table are located.
+#' These are numeric, select, selectize, and checkbox inputs.
+#' They cover:
+#' \itemize{
+#'    \item column numbers for all necessary information (like \emph{name}, \emph{IBAN}, \emph{date}...)
+#'    \item reference account of the uploaded transactions
+#'    \item date format used in the \emph{date} column of the table
+#'    \item decimal and column separators
+#'    \item whether the first line of the file contains column headings
+#'    \item how many lines should be skipped and the maximum number of lines to read in the uploaded file
 #' }
+#'
+#' Some basic css styles are defined within this module.
+#' They are always prefixed with the \code{id}.
+#' Best look into the source code of this function to see all the styles defined in the beginning.
 #'
 #' @family application functions
 #'
-#' @param id              \code{chr} identifier used in shiny session 
-#' @param open_modal      \code{reactive} for triggering the modal (e.g. \code{\link{shiny::actionButton}})
+#' @param id              \code{chr} identifier used in shiny session
 #' 
 #' @return \code{chr} html code of UI
 #' 
@@ -62,7 +79,7 @@ UploadSettingsUI <- function( id )
     div(class = ns("style_mainBlock"), actionButton(ns("btnSave"), "Save", icon = icon("floppy-o"))),
     div(class = ns("style_upload"), id = ns("div_upload"),
         fileInput(ns("upload"), "Upload Table", multiple = FALSE, accept = c("text", "csv"))),
-    p("Here, you can enter new transaction by uploading a csv/txt table.",
+    p("Here, you can enter new transactions by uploading a csv/txt table.",
       "Above you can select settings you have already saved, below you can modify them.",
       "Once you upload a table you will see how it is interpreted below.",
       "Any changes in the settings will take place immediately, so you can try around.",
@@ -76,13 +93,15 @@ UploadSettingsUI <- function( id )
     shinyBS::bsPopover(ns("btnSave"), "Save Current Settings", paste(
       "Saves the current settings. The settings name will be overwritten.",
       "You can change the settings name with the selection on the left of this button.",
+      "Please only use letters and numbers for setting names.",
       "Changes will take effect after the app was restarted."
     ), placement = "right"),
     shinyBS::bsPopover(ns("uploadSettings"), "Saved Settings", paste(
       "Here, you can chose upload settings that were already saved by their name.",
       "You can save the current settings by clicking the button on the right.",
       "This will overwrite the current setting name.",
-      "You can enter a new setting name by writing something into the box and clicking <b>Add</b>.",
+      "You can also enter a new setting name by writing something into the box and clicking <b>Add</b>.",
+      "Please only use letters and numbers for setting names [a-zA-Z0-9].",
       "Changes will take effect after the app was restarted."
     ), placement = "right"),
     shinyBS::bsPopover(ns("div_upload"), "Upload Table with Transactions", paste(
@@ -109,18 +128,23 @@ UploadSettingsUI <- function( id )
 
 #' UploadSettings
 #'
-#' UploadModal is a modal with multiple pages for entering transactions into the database.
+#' UploadSettings module provides UI input elements and server logic for defining, saving and retrieving
+#' upload settings, and for uploading a csv table with transactions.
 #' 
-#' This is the server logic of the modal.
-#' While the user goas through 4 pages in the modal following is done.
-#' \enumerate{
-#'    \item \code{\link{Read}} method extracts new accountss from \emph{transactions} object.
-#'    \item \code{\link{Predict}} method enters new accounts into the database and 
-#'    then predicts each transaction.
-#'    \item \code{\link{Duplicated}} reads the database to see if transactions were already entered.
-#'    \item \code{\link{Enter}} finally inserts new transaction into the database.
-#' }
+#' This is the server logic of the module.
+#' It handles loading and saving upload settings, reading a uploaded table, and doing a quality control.
+#' Since the upload settings change with the selection of saved upload settings,
+#' the second row of the UI input elements is completely rendered in the server.
+#' Their help texts (bsPopover) are also rendere in the server.
 #' 
+#' For loading and saving upload settings there is a selectize.
+#' Upload settings are saved with a name in the database with entry \emph{Settings} in table 
+#' \emph{storage} in the \code{list} element \emph{upload}.
+#' The selectize presents saved upload settings and by clicking on a name, these settings are loaded.
+#' If the \emph{save} button on the right to it is clicked, the current settings will overwrite
+#' the previously saved ones. (This is not in a reactive, so changes will take effect after app restart)
+#' If no upload settings were saved, there is a fallback mechanism.
+#' New names can be entered and saved. 
 #'
 #' @family application functions
 #'
@@ -129,7 +153,12 @@ UploadSettingsUI <- function( id )
 #' @param session         \code{list} from shiny session
 #' @param db              \code{chr} of database file (full path and file name)
 #' 
-#' @return \code{TRUE}
+#' @return \code{list} of 3 elements
+#' \itemize{
+#'    \item \emph{tas} \code{NULL} or a \code{Transactions} object as created with \code{\link{Read_csv}}
+#'    \item \emph{err} \code{bool} whether there was an error during upload
+#'    \item \emph{msg} \code{chr} a possible error message
+#' }
 #' 
 #' @examples 
 #'
@@ -141,6 +170,7 @@ UploadSettings <- function( input, output, session, db )
   ns <- session$ns
   
   # load saved settings (newest first) and reference types
+  # keep allSettings (this list might include other settings)
   allSettings <- SelectBLOB("Settings", db)
   settings <- allSettings$upload
   settings <- rev(settings)
@@ -150,7 +180,7 @@ UploadSettings <- function( input, output, session, db )
   if( is.null(settings) ){
     settings <- list(
       default = list(
-        col = list(name = 6, iban = 7, bic = 8, date = 3, reference = 5, entry = 4, value = 9, currency = 10),
+        col = list(name = 1, iban = 2, bic = 3, date = 4, reference = 5, entry = 6, value = 7, currency = 8),
         type = "giro", date = "%Y-%m-%d", colSep = "\t", decSep = ".", head = TRUE, skip = 0, nMax = -1
       )
     )
@@ -169,17 +199,17 @@ UploadSettings <- function( input, output, session, db )
     saved <- if( !is.null(saved) && saved %in% names(settings) ) settings[[saved]] else NULL
     
     # selection for reference account
-    type <- if( !is.null(saved) ) saved$type else ""
+    type <- if( is.null(saved) ) "" else saved$type
     selected <- if( type %in% refAccounts ) type else refAccounts[1]
     ref <- shinyBS::popify(selectInput(ns("accountType"), "reference account", refAccounts, selected = selected),
       "Reference Account Type", "To which of your accounts do these transactions belong to?", placement = "right")
     ref <- div(class = ns("style_ref"), ref)
 
     # column mappings
-    if( !is.null(saved) ){
-      fileCols <- saved$col
+    if( is.null(saved) ){
+      fileCols <- list(name = 1, iban = 2, bic = 3, date = 4, reference = 5, entry = 6, value = 7, currency = 8)
     } else {
-      fileCols <- list(name = 1, iban = 1, bic = 1, date = 1, reference = 1, entry = 1, value = 1, currency = 1)
+      fileCols <- saved$col
     }
     cols <- list(
       shinyBS::popify(numericInput(ns("nameCol"), "name", fileCols$name, min = 1),
@@ -202,7 +232,7 @@ UploadSettings <- function( input, output, session, db )
     cols <- tagList(lapply(cols, function(x) div(class = ns("style_cols"), x)))
   
     # seperators
-    selected <- if( !is.null(saved) ) c(saved$colSep, saved$decSep) else c("\t", ".")
+    selected <- if( is.null(saved) ) c("\t", ".") else c(saved$colSep, saved$decSep)
     seps <- list(
       shinyBS::popify(selectInput(ns("colSep"), "col sep", list(tab = "\t", ";", ",", ":"), selected = selected[1]),
         "Column Separator", paste("Every table uses a symbol to separate columns. Which one is used here?",
@@ -215,7 +245,7 @@ UploadSettings <- function( input, output, session, db )
     seps <- tagList(lapply(seps, function(x) div(class = ns("style_seps"), x)))
     
     # skip lines
-    selected <- if( !is.null(saved) ) c(saved$skip, saved$nMax) else c(0, -1)
+    selected <- if( is.null(saved) ) c(0, -1) else c(saved$skip, saved$nMax)
     skps <- list(
       shinyBS::popify(numericInput(ns("skip"), "skip lines", min = 0, value = selected[1]),
         "Number of Lines to Skip", "Do the first lines contain some text which does not belong to the actual table?", 
@@ -228,7 +258,7 @@ UploadSettings <- function( input, output, session, db )
     skps <- tagList(lapply(skps, function(x) div(class = ns("style_skps"), x)))
     
     # head row
-    selected <- if( !is.null(saved) ) saved$head else TRUE
+    selected <- if( is.null(saved) ) TRUE else saved$head
     hd <- shinyBS::popify(checkboxInput(ns("hdBl"), "1st line as column names", value = selected),
       "1st Line are Columns Names",
       "Often the 1st line contains the column names. It does not contain actual values.", placement = "right" )                       
@@ -236,14 +266,15 @@ UploadSettings <- function( input, output, session, db )
     
     # date formats
     dateForms <- list(examples = c("%d.%m.%Y", "%Y-%m-%d", "%Y/%m/%d"))
-    if( !is.null(saved) ) dateForms[["saved"]] <- saved$date
+    if( !is.null(saved) ) dateForms[[2]] <- saved$date
     dt <- shinyBS::popify(selectizeInput(ns("dateFormat"), "date format", dateForms, 
       selected = dateForms[[length(dateForms)]], options = list(maxItems = 1, create = TRUE), multiple = TRUE),
       "Date Formatting", paste(
         "In the date column, how is the date written? Provide the correct formatting.<br/>",
         "It works like this:<br/><b>%Y</b> is the year in 4 digits, <b>%y</b> in 2 digits,",
         "<b>%m</b> is the month in 2 digits, <b>%d</b> is the day in 2 digits.",
-        "Write the date by replacing year, month, day.<br/>Examples:<br/>",
+        "Write the date by replacing year, month, day.",
+        "Then confirm by clicking on <b>Add</b>.<br/>Examples:<br/>",
         "<em>%d.%m.%Y</em> for 13.03.1990<br/>",
         "<em>%Y-%m-%d</em> for 1990-03-13<br/>",
         "<em>%Y/%m/%d</em> for 1990/03/13<br/>"
@@ -259,14 +290,16 @@ UploadSettings <- function( input, output, session, db )
   
   # toggle save button
   observe(
-    if( !is.null(input$uploadSettings) && input$uploadSettings != "" ){
-      shinyjs::enable("btnSave")
-    } else {
+    if( is.null(input$uploadSettings) || input$uploadSettings == "" || 
+        !grepl("^[0-9a-zA-Z]*$", input$uploadSettings) ){
       shinyjs::disable("btnSave")
+    } else {
+      shinyjs::enable("btnSave")
     }
   )
   
   # save current settings
+  # by writing upload element back into allSettings
   observeEvent(input$btnSave, {
       curSet <- rev(settings)
       cols <- list(name = input$nameCol, iban = input$ibanCol, bic = input$bicCol, date = input$dateCol, 
@@ -293,9 +326,9 @@ UploadSettings <- function( input, output, session, db )
     
     # catch errors
     if( inherits(res, "try-error") ){
-      out <- list(obj = NULL, err = TRUE, msg = res[1])
+      out <- list(tas = NULL, err = TRUE, msg = res[1])
     } else {
-      out <- list(obj = res, err = FALSE, msg = "")
+      out <- list(tas = res, err = FALSE, msg = "")
     }
     
     out

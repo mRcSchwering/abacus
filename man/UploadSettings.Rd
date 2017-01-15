@@ -16,21 +16,32 @@ UploadSettings(input, output, session, db)
 \item{db}{\code{chr} of database file (full path and file name)}
 }
 \value{
-\code{TRUE}
+\code{list} of 3 elements
+\itemize{
+   \item \emph{tas} \code{NULL} or a \code{Transactions} object as created with \code{\link{Read_csv}}
+   \item \emph{err} \code{bool} whether there was an error during upload
+   \item \emph{msg} \code{chr} a possible error message
+}
 }
 \description{
-UploadModal is a modal with multiple pages for entering transactions into the database.
+UploadSettings module provides UI input elements and server logic for defining, saving and retrieving
+upload settings, and for uploading a csv table with transactions.
 }
 \details{
-This is the server logic of the modal.
-While the user goas through 4 pages in the modal following is done.
-\enumerate{
-   \item \code{\link{Read}} method extracts new accountss from \emph{transactions} object.
-   \item \code{\link{Predict}} method enters new accounts into the database and 
-   then predicts each transaction.
-   \item \code{\link{Duplicated}} reads the database to see if transactions were already entered.
-   \item \code{\link{Enter}} finally inserts new transaction into the database.
-}
+This is the server logic of the module.
+It handles loading and saving upload settings, reading a uploaded table, and doing a quality control.
+Since the upload settings change with the selection of saved upload settings,
+the second row of the UI input elements is completely rendered in the server.
+Their help texts (bsPopover) are also rendere in the server.
+
+For loading and saving upload settings there is a selectize.
+Upload settings are saved with a name in the database with entry \emph{Settings} in table 
+\emph{storage} in the \code{list} element \emph{upload}.
+The selectize presents saved upload settings and by clicking on a name, these settings are loaded.
+If the \emph{save} button on the right to it is clicked, the current settings will overwrite
+the previously saved ones. (This is not in a reactive, so changes will take effect after app restart)
+If no upload settings were saved, there is a fallback mechanism.
+New names can be entered and saved.
 }
 \examples{
 
