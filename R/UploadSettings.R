@@ -26,8 +26,8 @@
 #' }
 #'
 #' Some basic css styles are defined within this module.
-#' They are always prefixed with the \code{id}.
-#' Best look into the source code of this function to see all the styles defined in the beginning.
+#' Classes are always prefixed with the \code{id}.
+#' Best look into the source code of this function to see all the classes defined in the beginning.
 #'
 #' @family application functions
 #'

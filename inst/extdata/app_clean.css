@@ -1,27 +1,49 @@
-/* skin */
+/*              */
+/*     SKIN     */
+/*              */
+
+/* Body */
 .content-wrapper, .right-side {
     background-color: white;
 }
+
+/* Sidebar */
 .skin-blue .left-side,
 .skin-blue .main-sidebar,
+.skin-blue .sidebar a,
 .skin-blue .wrapper {
     background-color: #e6e6e6;
+    border-left-color: #4285f4;
+    color: black;
 }
+.skin-blue .sidebar-menu > li.active > a,
+.skin-blue .treeview-menu > li > a {
+    background: #bfbfbf;
+    border-left-color: #4285f4;
+    color: black;
+}
+.skin-blue .sidebar-menu > li > .treeview-menu {
+    background-color: #bfbfbf;
+}
+.skin-blue .sidebar-menu > li:hover > a,
+.skin-blue .treeview-menu > li:hover > a {
+    background: #808080;
+}
+
+/* Header */
 .skin-blue .main-header .logo,
+.skin-blue .main-header .logo:hover,
 .skin-blue .main-header .navbar, 
 .skin-blue .main-header .navbar .sidebar-toggle:hover {
     background-color: #4285f4;
 }
-.skin-blue .sidebar-menu > li.active > a,
-.skin-blue .sidebar-menu > li:hover > a {
-    background: #bfbfbf;
-    border-left-color: #4285f4;
-     color: black;
-}
-.skin-blue .sidebar a {
-    color: black;
-}
 
+
+
+
+/*           */
+/*   OTHER   */
+/*           */
 
 /* error message color */
 .shiny-output-error-validation {
@@ -31,4 +53,38 @@
 /* boxes in general */
 .box {
     min-height: 100px;
+}
+
+/* hightlighted buttons */
+.btn.btn-default.action-button.hlight.shiny-bound-input {
+    background-color: #4285f4;
+    color: white;
+    font-family: helvetica;
+    font-weight: bold;
+    min-height: 25px;
+    min-weight: 80px;
+}
+
+/* div with box margins */
+.box-equal-div {
+    margin-left: 25px;
+}
+
+/* cooler dl */
+dl {
+  width: 400px;
+  overflow: hidden;
+}
+dt {
+  float: left;
+  width: 20%;
+  font-weight: bold;
+  line-height: 1.5;
+}
+dd {
+  float: left;
+  width: 80%;
+  padding: 0;
+  margin: 0;
+  line-height: 1.5;
 }
