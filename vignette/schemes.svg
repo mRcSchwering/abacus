@@ -1617,8 +1617,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.5243566"
-     inkscape:cx="4007.839"
-     inkscape:cy="1855.1729"
+     inkscape:cx="905.94231"
+     inkscape:cy="2877.378"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -1694,7 +1694,9 @@
        y="-2415.7019"
        x="172.79167"
        style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       xml:space="preserve"><tspan
+       xml:space="preserve"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;font-family:'Adobe Helvetica';-inkscape-font-specification:'Adobe Helvetica'"
          y="-2415.7019"
          x="172.79167"
@@ -2060,7 +2062,9 @@
        x="1080.5708"
        y="-2415.7019"
        id="text10077"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
          id="tspan10079"
          x="1080.5708"
@@ -2266,7 +2270,9 @@
          id="tspan10545">BLOB</tspan></text>
     <g
        id="g4679"
-       transform="translate(0,32.395874)">
+       transform="translate(0,32.395874)"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <rect
          style="fill:#e3e3e3;fill-opacity:0.72677594;fill-rule:nonzero;stroke:none;stroke-width:18.10000038;stroke-linecap:square;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
          id="rect4659"
@@ -2346,7 +2352,9 @@
          id="tspan4730">INTEGER (64bit)</tspan></text>
     <g
        id="g4690"
-       transform="translate(0,27.661158)">
+       transform="translate(0,27.661158)"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <rect
          inkscape:export-ydpi="90"
          inkscape:export-xdpi="90"
