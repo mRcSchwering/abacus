@@ -26,7 +26,7 @@ Holds accounts involved in every transaction and personal accounts.
 Their IDs are used in the other tables as shown.
 *personalAccounts* only holds you own accounts.
 I made an extra table for that because personal accounts are used more frequently and need one more column.
-Since *accounts* will get very big I thoughts its worth it creating an extra table.
+Since *accounts* will get very big I thought its worth it creating an extra table.
 
 ### Transactions
 
@@ -118,7 +118,7 @@ For a new prediction several functions are needed though.
 I wrote them as S3 methods which carry around a *Transactions* object.
 It starts with `Read_csv` and ends with `Enter` (everything is cross referenced in doc).
 
-
+![database schema](vignette/procedures.png)
 
 
 
