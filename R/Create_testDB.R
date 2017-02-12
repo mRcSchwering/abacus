@@ -1,10 +1,10 @@
 #' Create_testDB
 #'
-#' This function creates a test database with 100 accounts and 1000 transactions.
+#' This function creates a test database with 100 accounts and 1000 transactions for trying out stuff.
 #'
 #' @family test.db functions
 #'
-#' @param dbName               \code{chr} (\code{"test.db"}) name of database / file (and path)
+#' @param dbName               \code{chr} (\code{"test.db"}) name of database / file (in current working dir)
 #' 
 #' @return \code{TRUE} if successful
 #'

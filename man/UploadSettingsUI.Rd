@@ -40,16 +40,16 @@ They cover:
 }
 
 Some basic css styles are defined within this module.
-They are always prefixed with the \code{id}.
-Best look into the source code of this function to see all the styles defined in the beginning.
+Classes are always prefixed with the \code{id}.
+Best look into the source code of this function to see all the classes defined in the beginning.
 }
 \examples{
 
 
 }
 \seealso{
-Other application functions: \code{\link{UploadModalUI}},
-  \code{\link{UploadModal}}, \code{\link{UploadSettings}},
-  \code{\link{abacusApp}}
+Other application functions: \code{\link{EnteringModalUI}},
+  \code{\link{EnteringModal}},
+  \code{\link{UploadSettings}}, \code{\link{abacusApp}}
 }
 

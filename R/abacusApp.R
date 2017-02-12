@@ -23,15 +23,17 @@ abacusApp <- function( db )
   
   
   # global environment
-  options(database_file = "test.db")
+  options(database_file = db)
   
   
   # css stylesheet
   stylesheet <- paste(
-    scan(system.file("extdata", "app_clean.css", package = "abacus"), what = "", sep = "\n"), collapse = " ")
+    scan(system.file("extdata", "app_clean.css", package = "abacus"), what = "", sep = "\n"), 
+    collapse = " "
+  )
   
   
-  # for some reason modals dont work if I just import shinyBS
+  # for some reason modals dont work if I just do shinyBS::
   library(shinyBS)
   
   
@@ -54,7 +56,7 @@ abacusApp <- function( db )
     tags$head(tags$style(HTML(stylesheet))),
     tabItems(
       tabItem("tab_enter_tas", 
-        UploadModalUI("enter_tas", open_modal = "btn_enter_tas"),
+        EnteringModalUI("enter_tas", open_modal = "btn_enter_tas"),
         fluidRow(
           box(title = "Settings", UploadSettingsUI("upload_tas")),
           h4("Reference Account"),
@@ -93,7 +95,8 @@ abacusApp <- function( db )
     
     # File Upload
     # module for upload settings
-    # displaying uploaded transactions object
+    # displaying uploaded transactions as table
+    # show reference account information as description list
     uploadedTas <- callModule(UploadSettings, "upload_tas", db = db)
     output$uploadedTable <- DT::renderDataTable({
       validate(need(!uploadedTas()$err, uploadedTas()$msg))
@@ -109,20 +112,24 @@ abacusApp <- function( db )
         uploadedTas()$tas$Reference$type
       ))
     })
-    output$test <- renderPrint(uploadedTas()$tas$Reference)
-    observe(
-      if( uploadedTas()$err || is.null(uploadedTas()$tas) ){
-        shinyjs::disable("btn_enter_tas")
-      } else {
-        shinyjs::enable("btn_enter_tas")
-      }
-    )
     
-    
+
     # Enter Transactions
     # multiple pages modal for writing new transactions
-    # and also new accounts
-    callModule(UploadModal, "enter_tas", db = db)
+    # and also new accounts into db
+    # can only be opened via button after successful file upload
+    observe(
+      if( uploadedTas()$err || is.null(uploadedTas()$tas) )
+        shinyjs::disable("btn_enter_tas") else
+          shinyjs::enable("btn_enter_tas")
+    )
+    callModule(EnteringModal, "enter_tas", 
+               open_modal = reactive(input$btn_enter_tas),
+               tas = reactive(uploadedTas()$tas), 
+               db = db)
+    
+    
+    
   }
   
   

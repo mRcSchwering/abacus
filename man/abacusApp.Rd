@@ -20,8 +20,8 @@ The App
 
 }
 \seealso{
-Other application functions: \code{\link{UploadModalUI}},
-  \code{\link{UploadModal}},
+Other application functions: \code{\link{EnteringModalUI}},
+  \code{\link{EnteringModal}},
   \code{\link{UploadSettingsUI}},
   \code{\link{UploadSettings}}
 }
