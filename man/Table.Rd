@@ -9,7 +9,7 @@ Table(data, colNames = NULL, bRownames = FALSE, style = "default",
   alignment = list(centre = NULL, justify = NULL, left = NULL),
   formatCurr = NULL, formatPerc = NULL, formatRoun = NULL,
   bButtons = FALSE, bResponsive = FALSE, pageLen = 15, bScroll = FALSE,
-  filename = "*")
+  filename = "*", esc = TRUE)
 }
 \arguments{
 \item{data}{\code{dataframe} to be rendered as table}
@@ -48,6 +48,8 @@ and there is a ugly plus symbol where they can be displayed by clicking}
 \item{bScroll}{\code{bool} whether xScroll is enabled (horizontal scrolling)}
 
 \item{filename}{\code{chr} filename for downloaded data}
+
+\item{esc}{\code{bool} whether to escape HTML, if not JS callback ensures input bindings}
 
 \item{buttons}{\code{NULL} or \code{chr} arr defining download buttons used in table ('copy', 'csv', 'excel', 'pdf', 'print')}
 }

@@ -4,7 +4,7 @@
 \alias{EnteringModal}
 \title{EnteringModal}
 \usage{
-EnteringModal(input, output, session, db)
+EnteringModal(input, output, session, open_modal, tas, db)
 }
 \arguments{
 \item{input}{\code{list} from shiny session}
@@ -23,7 +23,7 @@ A module for a modal with multiple pages for entering transactions into the data
 }
 \details{
 This is the server logic of the module.
-While the user goas through 4 pages in the modal following is done.
+While the user goes through 4 pages in the modal following is done.
 \enumerate{
    \item \code{\link{Read}} method extracts new accountss from \emph{transactions} object.
    \item \code{\link{Predict}} method enters new accounts into the database and 

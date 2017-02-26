@@ -14,7 +14,7 @@
 #' @family application functions
 #'
 #' @param id              \code{chr} identifier used in shiny session 
-#' @param open_modal      \code{reactive} for triggering the modal (e.g. \code{\link{shiny::actionButton}})
+#' @param open_modal      \code{reactive} for triggering the modal (e.g. \code{actionButton})
 #' 
 #' @return \code{chr} html code of UI
 #' 
@@ -27,9 +27,19 @@ EnteringModalUI <- function( id, open_modal )
 {
   ns <- NS(id)
   
+  # styles
+  style <- tags$head(tags$style(
+    HTML(
+      sprintf(".%s { color: red; }", ns("errmsg")),
+      sprintf(".%s { margin-bottom: 0px; }", ns("chown")),
+      sprintf(".%s { margin-top: -5px; }", ns("chown")),
+      sprintf(".%s { width: 250px; }", ns("chown")),
+      sprintf(".%s { height: 30px; }", ns("chown")),
+    )
+  ))
+  
   # building the modal
-  modal <- shinyBS::bsModal(id = ns("modal"), title = "Test Modal", 
-                              trigger = open_modal, size = "large", 
+  modal <- shinyBS::bsModal(id = ns("modal"), title = "Test Modal", trigger = open_modal, size = "large", 
     shinyjs::hidden(tagList(
       
       # Page 1
@@ -37,6 +47,7 @@ EnteringModalUI <- function( id, open_modal )
         h3("New Accounts"), 
         p("These accounts are not in the database yet.
           Please check if you want to enter them like this."),
+        p("For owner names please only use", strong("letters"), "and", strong("numbers.")),
         DT::dataTableOutput(ns("newAccounts")),
         p("With a click on ", strong("Next"), 
           " the new accounts are entered into the database.
@@ -85,7 +96,7 @@ EnteringModalUI <- function( id, open_modal )
     actionButton(ns("btnNext"), "Next >")
   )
   
-  return(modal)
+  return(tagList(style, modal))
 }
 
 
@@ -104,7 +115,7 @@ EnteringModalUI <- function( id, open_modal )
 #' A module for a modal with multiple pages for entering transactions into the database.
 #' 
 #' This is the server logic of the module.
-#' While the user goas through 4 pages in the modal following is done.
+#' While the user goes through 4 pages in the modal following is done.
 #' \enumerate{
 #'    \item \code{\link{Read}} method extracts new accountss from \emph{transactions} object.
 #'    \item \code{\link{Predict}} method enters new accounts into the database and 
@@ -130,41 +141,60 @@ EnteringModalUI <- function( id, open_modal )
 #'
 EnteringModal <- function( input, output, session, open_modal, tas, db ) 
 {
-  # status variable
-  status <- reactiveValues(page = 1, err = FALSE, msg = "")
+  ns <- session$ns
+  
+  # reactive values
+  status <- reactiveValues(page = 1, err = FALSE, msg = "", tas = NULL)
   
   # before Page 1 (Page 0)
   # run Read method to identify new accounts
-  tas1 <- eventReactive(tas(), {
-    if( is.null(tas()) ) NULL else Read(tas())
+  observeEvent(tas(), {
+    status$tas <- Read(tas())
   })
   
   # Page 1
-  # show new accounts in a table with option to make owner changes
-  # upon click try to run Predict (this will try to enter accounts into db)
+  # show new accounts in a table with option to make owner name changes
+  # upon click replace old owner names with the ones entered and 
+  # try to run Predict method
+  # if successful update tas object
   output$newAccounts <- DT::renderDataTable({
-    validate(need(tas1(), "There are no new accounts in these transactions"), errorClass = 0)
-    Table(tas1()$NewAccounts, dom = "t", class = "stripe hover", pageLen = 10)
+    validate(need(status$tas, "There are no new accounts in these transactions"), errorClass = 0)
+    nas <- status$tas$NewAccounts
+    txtIns <- sapply(1:nrow(nas), function(idx){
+      as.character(div(
+          class = ns("chown"), 
+          textInput(ns(paste0("chown", idx)), NULL, nas$owner[idx])
+      ))
+    })
+    nas$owner <- txtIns
+    Table(nas, esc = FALSE)
   })
   observeEvent(input$btnNext, {
     if( status$page == 1 ){
       status$err <- FALSE
       status$msg <- ""
-      res <- try( Predict(tas1()) )
+      tas <- status$tas
+      txtIns <- sapply(1:nrow(tas$NewAccounts), function(idx){
+        as.character(input[[paste0("chown", idx)]])
+      })
+      tas$NewAccounts$owner <- txtIns
+      res <- try(Predict(tas))
       if( inherits(res, "try-error") ){
         status$err <- TRUE
         status$msg <- attr(res, "condition")$message
+      } else {
+        status$tas <- res
       }
     }
   })
   
   #### need to build table with inputs
   
-  observeEvent(tas1(),{print("Tas1 has changed"); print(tas1())})
+  observeEvent(status$tas,print("Tas has changed"))
   
   
   # multiple pages logic
-  output$errormsg <- renderUI(sprintf("<div>%s</div>", status$msg))
+  output$errormsg <- renderUI(div(class = ns("errmsg"), status$msg))
   observeEvent(status$page, {
     shinyjs::toggleState(id = "btnPrev", condition = status$page == 3)
     shinyjs::toggleState(id = "btnNext", condition = status$page < 4)

@@ -9,7 +9,7 @@ EnteringModalUI(id, open_modal)
 \arguments{
 \item{id}{\code{chr} identifier used in shiny session}
 
-\item{open_modal}{\code{reactive} for triggering the modal (e.g. \code{\link{shiny::actionButton}})}
+\item{open_modal}{\code{reactive} for triggering the modal (e.g. \code{actionButton})}
 }
 \value{
 \code{chr} html code of UI

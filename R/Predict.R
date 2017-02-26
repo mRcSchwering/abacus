@@ -67,7 +67,8 @@ Predict <- function (x, ...) {
 Predict.Transactions <- function( x )
 {
   if(!"NewAccounts" %in% names(x)) stop("Use Read method with Transactions object first")
-  if(any(grepl("[^0-9A-Za-z ]", x$NewAccounts$owner))) stop("Please don't use special characters in owner names")
+  if(any(nchar(x$NewAccounts$owner) < 1)) stop("At least 1 owner has no name")
+  if(any(grepl("[^0-9A-Za-z ]", x$NewAccounts$owner))) stop("Please only use letters and numbers as owner names")
   if(any(is.na(x$Transactions$value))) stop("NA's in transaction values")
   
   # insert new accounts and overwrite the relevant values in Transactions table

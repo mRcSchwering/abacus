@@ -27,6 +27,7 @@
 #'                       and there is a ugly plus symbol where they can be displayed by clicking
 #' @param  pageLen     \code{num} for how many rows are displayed
 #' @param  filename    \code{chr} filename for downloaded data
+#' @param  esc         \code{bool} whether to escape HTML, if not JS callback ensures input bindings
 #' 
 #' @return \code{datatables}, \code{htmlwidget} object
 #' 
@@ -38,7 +39,7 @@
 Table <- function( data, colNames = NULL, bRownames = FALSE, style = "default", class = "display", 
                       dom = "flrtip", ordering = NULL, alignment = list(centre = NULL, justify = NULL, left = NULL), 
                       formatCurr = NULL, formatPerc = NULL, formatRoun = NULL, bButtons = FALSE, bResponsive = FALSE,
-                      pageLen = 15, bScroll = FALSE, filename = "*" )
+                      pageLen = 15, bScroll = FALSE, filename = "*", esc = TRUE )
 {
   # dom opts
   if( bButtons ) dom <- paste0("B", dom)
@@ -63,6 +64,12 @@ Table <- function( data, colNames = NULL, bRownames = FALSE, style = "default", 
                 lengthMenu = list(c(5, 15, 50, 100, -1), c('5', '15', '50', '100', 'All')), 
                 pageLength = pageLen, scrollX = bScroll)
   
+  # shiny input bindings
+  if( !esc ){
+    opts[["preDrawCallback"]] <- htmlwidgets::JS('function() { Shiny.unbindAll(this.api().table().node()); }')
+    opts[["drawCallback"]] <- htmlwidgets::JS('function() { Shiny.bindAll(this.api().table().node()); } ') 
+  }
+  
   # ordering
   if( !is.null(ordering) ) opts[["order"]] <- ordering
   
@@ -81,7 +88,7 @@ Table <- function( data, colNames = NULL, bRownames = FALSE, style = "default", 
   
   # create table
   d <- DT::datatable( data, rownames = bRownames, style = style, class = class, 
-                      options = opts, extensions = ext )
+                      options = opts, extensions = ext, escape = esc )
   
   # formatting
   if( !is.null(formatCurr) ){
