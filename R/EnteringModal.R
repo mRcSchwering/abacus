@@ -34,7 +34,7 @@ EnteringModalUI <- function( id, open_modal )
       sprintf(".%s { margin-bottom: 0px; }", ns("chown")),
       sprintf(".%s { margin-top: -5px; }", ns("chown")),
       sprintf(".%s { width: 250px; }", ns("chown")),
-      sprintf(".%s { height: 30px; }", ns("chown")),
+      sprintf(".%s { height: 30px; }", ns("chown"))
     )
   ))
   
@@ -50,7 +50,7 @@ EnteringModalUI <- function( id, open_modal )
         p("For owner names please only use", strong("letters"), "and", strong("numbers.")),
         DT::dataTableOutput(ns("newAccounts")),
         p("With a click on ", strong("Next"), 
-          " the new accounts are entered into the database.
+          " the new accounts are entered into the database -- if there were any.
           If you want to abort, just close this window. 
           Nothing has been entered yet.")
       ),
@@ -148,8 +148,9 @@ EnteringModal <- function( input, output, session, open_modal, tas, db )
   
   # before Page 1 (Page 0)
   # run Read method to identify new accounts
-  observeEvent(tas(), {
-    status$tas <- Read(tas())
+  observeEvent(open_modal(), status$page <- 1)
+  observeEvent(list(open_modal(), tas()), {
+    if( !is.null(tas()) ) status$tas <- Read(tas())
   })
   
   # Page 1
@@ -158,7 +159,10 @@ EnteringModal <- function( input, output, session, open_modal, tas, db )
   # try to run Predict method
   # if successful update tas object
   output$newAccounts <- DT::renderDataTable({
-    validate(need(status$tas, "There are no new accounts in these transactions"), errorClass = 0)
+    if( is.null(status$tas$NewAccounts) || nrow(status$tas$NewAccounts) < 1 ){
+      dt <- data.frame("No" = "No", "New" = "New", "Accounts" = "Accounts")
+      return(Table(dt, class = "stripe hover", dom = "t")) 
+    }
     nas <- status$tas$NewAccounts
     txtIns <- sapply(1:nrow(nas), function(idx){
       as.character(div(
@@ -174,10 +178,12 @@ EnteringModal <- function( input, output, session, open_modal, tas, db )
       status$err <- FALSE
       status$msg <- ""
       tas <- status$tas
-      txtIns <- sapply(1:nrow(tas$NewAccounts), function(idx){
-        as.character(input[[paste0("chown", idx)]])
-      })
-      tas$NewAccounts$owner <- txtIns
+      if( nrow(tas$NewAccounts) > 0){
+        txtIns <- sapply(1:nrow(tas$NewAccounts), function(idx){
+          as.character(input[[paste0("chown", idx)]])
+        })
+        tas$NewAccounts$owner <- txtIns 
+      }
       res <- try(Predict(tas))
       if( inherits(res, "try-error") ){
         status$err <- TRUE
@@ -190,7 +196,7 @@ EnteringModal <- function( input, output, session, open_modal, tas, db )
   
   #### need to build table with inputs
   
-  observeEvent(status$tas,print("Tas has changed"))
+  observeEvent(status$tas,print(status$tas))
   
   
   # multiple pages logic
@@ -201,7 +207,6 @@ EnteringModal <- function( input, output, session, open_modal, tas, db )
     shinyjs::hide(selector = ".page")
     shinyjs::show(sprintf("page%s", status$page))
   })
-  observeEvent(open_modal(), status$page <- 1)
   observeEvent(input$btnPrev, status$page <- status$page + -1)
   observeEvent(input$btnNext, if(!status$err) status$page <- status$page + 1)
   
