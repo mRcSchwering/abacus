@@ -24,14 +24,7 @@ abacusApp <- function( db )
   
   # global environment
   options(database_file = db)
-  
-  
-  # css stylesheet
-  stylesheet <- paste(
-    scan(system.file("extdata", "app_clean.css", package = "abacus"), what = "", sep = "\n"), 
-    collapse = " "
-  )
-  
+
   
   # for some reason modals dont work if I just do shinyBS::
   library(shinyBS)
@@ -39,7 +32,6 @@ abacusApp <- function( db )
   
   # Dashboard Sidebar UI
   dashboard_sidebar <- dashboardSidebar(
-    shinyjs::useShinyjs(),
     sidebarMenu(
       menuItem("Enter Transactions", tabName = "tab_enter_tas", icon = icon("home")),
       menuItem("Test", tabName = "test", icon = icon("gear"),
@@ -53,7 +45,11 @@ abacusApp <- function( db )
   
   # Dashboard Body UI
   dashboard_body <- dashboardBody(
-    tags$head(tags$style(HTML(stylesheet))),
+    # head
+    shinyjs::useShinyjs(),
+    tags$head(includeCSS(system.file("www", "app_clean.css", package = "abacus"))),
+    tags$head(includeScript(system.file("www", "delay.js", package = "abacus"))),
+    # tabs
     tabItems(
       tabItem("tab_enter_tas", 
         EnteringModalUI("enter_tas", open_modal = "btn_enter_tas"),

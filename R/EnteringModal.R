@@ -58,15 +58,15 @@ EnteringModalUI <- function( id, open_modal )
       # Page 2
       div(class = "page", id = ns("page2"), 
         h3("Predictions"), 
-        p("The learning machine predicted the following types
-          for each prediction.
+        p("For each transaction the following labels were predicted. 
           Please check if they are correct.
           If not correct them."),
         p(strong("Predictions")),
         p("With a click on ", strong("Next"), 
-          " these transactions are not entered into the database yet.
+          " the provided labels are double checked. 
+          The transactions are not entered yet.
           If you want to abort you can do that by closing this window.
-          So far, only the new accounts from the previous page were entered.")
+          So far, only new accounts from the previous page were entered.")
       ),
       
       # Page 3
@@ -130,6 +130,9 @@ EnteringModalUI <- function( id, open_modal )
 #' @param input           \code{list} from shiny session
 #' @param output          \code{list} from shiny session
 #' @param session         \code{list} from shiny session
+#' @param open_modal      \code{reactive} used as trigger to open the modal
+#' @param tas             \code{reactive} which stores the initial transactions object
+#'                        created by \code{\link{Read_csv}} function
 #' @param db              \code{chr} of database file (full path and file name)
 #' 
 #' @return \code{TRUE}
@@ -194,7 +197,9 @@ EnteringModal <- function( input, output, session, open_modal, tas, db )
     }
   })
   
-  #### need to build table with inputs
+  # Page 2
+  # predictions are shown with option to correct them
+  
   
   observeEvent(status$tas,print(status$tas))
   
