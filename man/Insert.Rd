@@ -7,28 +7,38 @@
 Insert(data, table, db, add_id = FALSE, enforce_foreign_keys = TRUE)
 }
 \arguments{
-\item{data}{\code{data.frame} of data to be written into db table}
+\item{data}{\code{data.frame} of data to be written into db 
+table}
 
 \item{table}{\code{chr} of table name}
 
 \item{db}{\code{chr} full file name with path of database}
 
-\item{add_id}{\code{bool} (\code{FALSE}) whether 1st column named \emph{id} with values \code{NULL} should be added
-(will be autoincremented in table \emph{accounts})}
+\item{add_id}{\code{bool} (\code{FALSE}) whether 1st column 
+named \emph{id} with values \code{NULL} should 
+be added (will be autoincremented in table 
+\emph{accounts})}
 
-\item{enforce_foreign_keys}{\code{bool} (\code{TRUE}) whether to enforce rules on foreign keys}
+\item{enforce_foreign_keys}{\code{bool} (\code{TRUE}) whether to enforce 
+rules on foreign keys}
 }
 \value{
 \code{TRUE} if successful
 }
 \description{
-Convenience function to write a \code{data.frame} or \code{matrix} into a database table.
-The first column id will be added and incremented automatically if \code{add_id} is enabled.
+Convenience function to write a \code{data.frame} or \code{matrix} into a 
+database table. The first column id will be added and incremented 
+automatically if \code{add_id} is enabled.
 }
 \examples{
 db <- "db/test.db"
 Create_testDB(db)
-df <- data.frame(owner = "B. Clinton", iban = "IR98000020018267384", bic = "IR875TW78", type = "donations account")
+df <- data.frame(
+  owner = "B. Clinton", 
+  iban = "IR98000020018267384", 
+  bic = "IR875TW78", 
+  type = "donations account"
+)
 Insert(df, "accounts", "db/test.db", add_id = TRUE)
 
 }

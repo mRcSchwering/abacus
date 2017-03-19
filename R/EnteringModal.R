@@ -1,12 +1,14 @@
 #' EnteringModalUI
 #'
-#' A module for a modal with multiple pages for entering transactions into the database.
+#' A module for a modal with multiple pages for entering transactions into 
+#' the database.
 #' 
 #' This is the UI part of the module.
 #' A modal with 4 pages is created.
 #' \enumerate{
 #'    \item Checking and correcting new accounts found in uploaded transactions
-#'    \item Checking and correcting predictions made by machine learning algorithm about new transactions
+#'    \item Checking and correcting predictions made by machine learning 
+#'          algorithm about new transactions
 #'    \item Noting whether duplicated transactions should be entered anyway
 #'    \item Confirming sucessful finish
 #' }
@@ -14,7 +16,8 @@
 #' @family application functions
 #'
 #' @param id              \code{chr} identifier used in shiny session 
-#' @param open_modal      \code{reactive} for triggering the modal (e.g. \code{actionButton})
+#' @param open_modal      \code{reactive} for triggering the modal 
+#'                        (e.g. \code{actionButton})
 #' 
 #' @return \code{chr} html code of UI
 #' 
@@ -23,7 +26,7 @@
 #' 
 #' @export
 #'
-EnteringModalUI <- function( id, open_modal ) 
+EnteringModalUI <- function(id, open_modal) 
 {
   ns <- NS(id)
   
@@ -39,7 +42,11 @@ EnteringModalUI <- function( id, open_modal )
   ))
   
   # building the modal
-  modal <- shinyBS::bsModal(id = ns("modal"), title = "Test Modal", trigger = open_modal, size = "large", 
+  modal <- shinyBS::bsModal(
+    id = ns("modal"), 
+    title = "Test Modal", 
+    trigger = open_modal, 
+    size = "large", 
     shinyjs::hidden(tagList(
       
       # Page 1
@@ -47,7 +54,8 @@ EnteringModalUI <- function( id, open_modal )
         h3("New Accounts"), 
         p("These accounts are not in the database yet.
           Please check if you want to enter them like this."),
-        p("For owner names please only use", strong("letters"), "and", strong("numbers.")),
+        p("For owner names please only use", strong("letters"), 
+          "and", strong("numbers.")),
         DT::dataTableOutput(ns("newAccounts")),
         p("With a click on ", strong("Next"), 
           " the new accounts are entered into the database -- if there were any.
@@ -80,7 +88,8 @@ EnteringModalUI <- function( id, open_modal )
           " these transactions are entered into the database.
           If you want to abort you can do that by closing this window.
           You can also go to the previous window and correct the ", em("types"),
-          ". So far, only the new accounts from the previous page were entered.")
+          ". So far, only the new accounts from", 
+          "the previous page were entered.")
       ),
       
       # Page 4
@@ -112,16 +121,20 @@ EnteringModalUI <- function( id, open_modal )
 
 #' EnteringModal
 #'
-#' A module for a modal with multiple pages for entering transactions into the database.
+#' A module for a modal with multiple pages for entering transactions 
+#' into the database.
 #' 
 #' This is the server logic of the module.
 #' While the user goes through 4 pages in the modal following is done.
 #' \enumerate{
-#'    \item \code{\link{Read}} method extracts new accountss from \emph{transactions} object.
-#'    \item \code{\link{Predict}} method enters new accounts into the database and 
-#'    then predicts each transaction.
-#'    \item \code{\link{Duplicated}} reads the database to see if transactions were already entered.
-#'    \item \code{\link{Enter}} finally inserts new transaction into the database.
+#'    \item \code{\link{Read}} method extracts new accountss from 
+#'          \emph{transactions} object.
+#'    \item \code{\link{Predict}} method enters new accounts into the database 
+#'          and then predicts each transaction.
+#'    \item \code{\link{Duplicated}} reads the database to see if transactions 
+#'          were already entered.
+#'    \item \code{\link{Enter}} finally inserts new transaction into the 
+#'          database.
 #' }
 #' 
 #'
@@ -131,8 +144,8 @@ EnteringModalUI <- function( id, open_modal )
 #' @param output          \code{list} from shiny session
 #' @param session         \code{list} from shiny session
 #' @param open_modal      \code{reactive} used as trigger to open the modal
-#' @param tas             \code{reactive} which stores the initial transactions object
-#'                        created by \code{\link{Read_csv}} function
+#' @param tas             \code{reactive} which stores the initial transactions 
+#'                        object created by \code{\link{Read_csv}} function
 #' @param db              \code{chr} of database file (full path and file name)
 #' 
 #' @return \code{TRUE}
@@ -142,7 +155,7 @@ EnteringModalUI <- function( id, open_modal )
 #' 
 #' @export
 #'
-EnteringModal <- function( input, output, session, open_modal, tas, db ) 
+EnteringModal <- function(input, output, session, open_modal, tas, db) 
 {
   ns <- session$ns
   
@@ -153,7 +166,7 @@ EnteringModal <- function( input, output, session, open_modal, tas, db )
   # run Read method to identify new accounts
   observeEvent(open_modal(), status$page <- 1)
   observeEvent(list(open_modal(), tas()), {
-    if( !is.null(tas()) ) status$tas <- Read(tas())
+    if (!is.null(tas())) status$tas <- Read(tas())
   })
   
   # Page 1
@@ -162,17 +175,17 @@ EnteringModal <- function( input, output, session, open_modal, tas, db )
   # try to run Predict method
   # if successful update tas object
   output$newAccounts <- DT::renderDataTable({
-    if( is.null(status$tas$NewAccounts) || nrow(status$tas$NewAccounts) < 1 ){
+    if (is.null(status$tas$NewAccounts) || nrow(status$tas$NewAccounts) < 1) {
       dt <- data.frame("No" = "No", "New" = "New", "Accounts" = "Accounts")
       return(Table(dt, class = "stripe hover", dom = "t")) 
     }
     nas <- status$tas$NewAccounts
-    txtIns <- sapply(1:nrow(nas), function(idx){
-      as.character(div(
-          class = ns("chown"), 
-          textInput(ns(paste0("chown", idx)), NULL, nas$owner[idx])
-      ))
-    })
+    txtIns <- vapply(
+      1:nrow(nas), 
+      function(idx) as.character(div(class = ns("chown"), 
+            textInput(ns(paste0("chown", idx)), NULL, nas$owner[idx]))),
+      character(1)
+    )
     nas$owner <- txtIns
     Table(nas, esc = FALSE)
   })
@@ -182,13 +195,15 @@ EnteringModal <- function( input, output, session, open_modal, tas, db )
       status$msg <- ""
       tas <- status$tas
       if( nrow(tas$NewAccounts) > 0){
-        txtIns <- sapply(1:nrow(tas$NewAccounts), function(idx){
-          as.character(input[[paste0("chown", idx)]])
-        })
+        txtIns <- sapply(
+          1:nrow(tas$NewAccounts), 
+          function(idx) as.character(input[[paste0("chown", idx)]]),
+          character(1)
+        )
         tas$NewAccounts$owner <- txtIns 
       }
       res <- try(Predict(tas))
-      if( inherits(res, "try-error") ){
+      if (inherits(res, "try-error")) {
         status$err <- TRUE
         status$msg <- attr(res, "condition")$message
       } else {
@@ -213,7 +228,7 @@ EnteringModal <- function( input, output, session, open_modal, tas, db )
     shinyjs::show(sprintf("page%s", status$page))
   })
   observeEvent(input$btnPrev, status$page <- status$page + -1)
-  observeEvent(input$btnNext, if(!status$err) status$page <- status$page + 1)
+  observeEvent(input$btnNext, if (!status$err) status$page <- status$page + 1)
   
   return(TRUE)
 }

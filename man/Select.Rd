@@ -8,24 +8,31 @@ Select(table, db, eq = NULL, ge = NULL, le = NULL, all_and = FALSE,
   enforce_foreign_keys = TRUE, check_query = FALSE)
 }
 \arguments{
-\item{table}{\code{chr} of table name, will automatically be \code{INNER JOIN}ed in case relation exists}
+\item{table}{\code{chr} of table name, will automatically be 
+\code{INNER JOIN}ed in case relation exists}
 
 \item{db}{\code{chr} full file name with path of database}
 
-\item{eq}{\code{list} (\code{NULL}) defining a condition with \code{=} (equal). . 
-Element name specifies column, value its value (see details)}
+\item{eq}{\code{list} (\code{NULL}) defining a condition 
+with \code{=} (equal). Element name specifies 
+column, value its value (see details)}
 
-\item{ge}{\code{list} (\code{NULL}) defining a condition with \code{>=} (greater-equal). 
-Element name specifies column, value its value (see details)}
+\item{ge}{\code{list} (\code{NULL}) defining a condition 
+with \code{>=} (greater-equal). Element name 
+specifies column, value its value (see details)}
 
-\item{le}{\code{list} (\code{NULL}) defining a condition with \code{<=} (lesser-equal). . 
-Element name specifies column, value its value (see details)}
+\item{le}{\code{list} (\code{NULL}) defining a condition 
+with \code{<=} (lesser-equal). Element name 
+specifies column, value its value (see details)}
 
-\item{all_and}{\code{bool} (\code{FALSE}) whether all conditions are combined with \code{AND}}
+\item{all_and}{\code{bool} (\code{FALSE}) whether all conditions
+are combined with \code{AND}}
 
-\item{enforce_foreign_keys}{\code{bool} (\code{TRUE}) whether to enforce rules on foreign keys}
+\item{enforce_foreign_keys}{\code{bool} (\code{TRUE}) whether to enforce 
+rules on foreign keys}
 
-\item{check_query}{\code{bool} (\code{FALSE}) whether to just return the SQL query without actually sending it}
+\item{check_query}{\code{bool} (\code{FALSE}) whether to just return
+the SQL query without actually sending it}
 }
 \value{
 \code{data.frame} of table
@@ -33,20 +40,30 @@ Element name specifies column, value its value (see details)}
 \description{
 Convenience function for \code{SELECT} queries. 
 One of the 6 table names can be given with optional \code{WHERE} statements.
-In case transactions, capital or personalAccounts is selected, a \code{INNER JOIN} with accounts will be done (2 joins for transactions).
+In case transactions, capital or personalAccounts is selected, a 
+\code{INNER JOIN} with accounts will be done (2 joins for transactions).
 }
 \details{
-A \code{WHERE} condition can be added with arguments \code{eq} (equal), \code{ge} (greater-equal), \code{le} (lesser-equal).
-Conditions are given as list for the desired relation. The name of a list element defines a column and its value the value.
-Multiple \code{ge} and \code{se} conditions are combined by \code{AND} and \code{eq} conditions by \code{OR}.
-With \code{all_and} set to \code{TRUE} everything is combined with \code{AND}.
+A \code{WHERE} condition can be added with arguments \code{eq} (equal), 
+\code{ge} (greater-equal), \code{le} (lesser-equal).
+Conditions are given as list for the desired relation. The name of a list 
+element defines a column and its value the value.
+Multiple \code{ge} and \code{se} conditions are combined by \code{AND} and 
+\code{eq} conditions by \code{OR}.
+With \code{all_and} set to \code{TRUE} everything is combined with 
+\code{AND}.
 
 You can set \code{check_query} to \code{TRUE} to see the query.
 }
 \examples{
 db <- "db/test.db"
 Create_testDB(db)
-df <- Select("transactions", "db/test.db", le = list(payor_id = 2), eq = list(type = c("food", "purchase")))
+df <- Select(
+  "transactions", 
+  "db/test.db", 
+  le = list(payor_id = 2), 
+  eq = list(type = c("food", "purchase"))
+)
 
 }
 \seealso{

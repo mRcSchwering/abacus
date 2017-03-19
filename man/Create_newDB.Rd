@@ -7,7 +7,8 @@
 Create_newDB(dbName = "my.db")
 }
 \arguments{
-\item{dbName}{\code{chr} (\code{"my.db"}) name of database / file (and path)}
+\item{dbName}{\code{chr} (\code{"my.db"}) name of database /
+file (and path)}
 }
 \value{
 \code{TRUE} if successful

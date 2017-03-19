@@ -17,9 +17,9 @@
 #' 
 #' @export
 #'
-abacusApp <- function( db )
+abacusApp <- function(db)
 {
-  if( !file.exists(db) ) stop("Database file does not exist")
+  if (!file.exists(db)) stop("Database file does not exist")
   
   
   # global environment
@@ -29,12 +29,18 @@ abacusApp <- function( db )
   # for some reason modals dont work if I just do shinyBS::
   library(shinyBS)
   
+  # read help Texts
+  uploadSettings_helps <- .Read_html(
+    system.file("www", "helptext_UploadSettings.html", package = "abacus")
+  )
   
   # Dashboard Sidebar UI
   dashboard_sidebar <- dashboardSidebar(
     sidebarMenu(
-      menuItem("Enter Transactions", tabName = "tab_enter_tas", icon = icon("home")),
-      menuItem("Test", tabName = "test", icon = icon("gear"),
+      menuItem("Enter Transactions", 
+               tabName = "tab_enter_tas", icon = icon("home")),
+      menuItem("Test", 
+               tabName = "test", icon = icon("gear"),
                collapsible = TRUE,
                menuSubItem("Test1", tabName = "test1"),
                menuSubItem("Test2", tabName = "test2")
@@ -47,19 +53,24 @@ abacusApp <- function( db )
   dashboard_body <- dashboardBody(
     # head
     shinyjs::useShinyjs(),
-    tags$head(includeCSS(system.file("www", "app_clean.css", package = "abacus"))),
-    tags$head(includeScript(system.file("www", "delay.js", package = "abacus"))),
+    tags$head(includeCSS(system.file("www", "app_clean.css", 
+                                     package = "abacus"))),
+    tags$head(includeScript(system.file("www", "delay.js", 
+                                        package = "abacus"))),
+
     # tabs
     tabItems(
       tabItem("tab_enter_tas", 
         EnteringModalUI("enter_tas", open_modal = "btn_enter_tas"),
         fluidRow(
-          box(title = "Settings", UploadSettingsUI("upload_tas")),
+          box(title = "Settings", 
+              UploadSettingsUI("upload_tas", helps = uploadSettings_helps)),
           h4("Reference Account"),
           br(),
           uiOutput("uploadedReference"),
           br(),
-          actionButton("btn_enter_tas", "Enter Transactions", class = "hlight"),
+          actionButton("btn_enter_tas", 
+                       "Enter Transactions", class = "hlight"),
           helpText("Start writing the uploaded transactions into the database")
         ),
         fluidRow(
@@ -82,7 +93,7 @@ abacusApp <- function( db )
   
   
   # Server Logic
-  server <- function( input, output, session ) 
+  server <- function(input, output, session) 
   {
     # Init
     session$onSessionEnded(stopApp)
@@ -93,15 +104,22 @@ abacusApp <- function( db )
     # module for upload settings
     # displaying uploaded transactions as table
     # show reference account information as description list
-    uploadedTas <- callModule(UploadSettings, "upload_tas", db = db)
+    uploadedTas <- callModule(
+      UploadSettings, 
+      "upload_tas", 
+      db = db, 
+      helps = uploadSettings_helps
+    )
     output$uploadedTable <- DT::renderDataTable({
       validate(need(!uploadedTas()$err, uploadedTas()$msg))
-      Table(uploadedTas()$tas$Transactions, dom = "t", class = "stripe hover", pageLen = 10)
+      Table(uploadedTas()$tas$Transactions, dom = "t", 
+            class = "stripe hover", pageLen = 10)
     })
     output$uploadedReference <- renderUI({
       validate(need(!uploadedTas()$err, uploadedTas()$msg))
       HTML(sprintf(
-        "<dl><dt>Owner</dt><dd>%s</dd><dt>IBAN</dt><dd>%s</dd><dt>BIC</dt><dd>%s</dd><dt>Type</dt><dd>%s</dd></dl>",
+        paste0("<dl><dt>Owner</dt><dd>%s</dd><dt>IBAN</dt><dd>%s</dd>",
+               "<dt>BIC</dt><dd>%s</dd><dt>Type</dt><dd>%s</dd></dl>"),
         uploadedTas()$tas$Reference$account_owner, 
         uploadedTas()$tas$Reference$account_iban,
         uploadedTas()$tas$Reference$account_bic, 
@@ -114,11 +132,13 @@ abacusApp <- function( db )
     # multiple pages modal for writing new transactions
     # and also new accounts into db
     # can only be opened via button after successful file upload
-    observe(
-      if( uploadedTas()$err || is.null(uploadedTas()$tas) )
-        shinyjs::disable("btn_enter_tas") else
+    observe({
+      if (uploadedTas()$err || is.null(uploadedTas()$tas)){
+        shinyjs::disable("btn_enter_tas") 
+      } else {
           shinyjs::enable("btn_enter_tas")
-    )
+      }
+    })
     callModule(EnteringModal, "enter_tas", 
                open_modal = reactive(input$btn_enter_tas),
                tas = reactive(uploadedTas()$tas), 

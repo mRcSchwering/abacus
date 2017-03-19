@@ -7,12 +7,14 @@
 Create_testDB(dbName = "test.db")
 }
 \arguments{
-\item{dbName}{\code{chr} (\code{"test.db"}) name of database / file (in current working dir)}
+\item{dbName}{\code{chr} (\code{"test.db"}) name of database /
+file (in current working dir)}
 }
 \value{
 \code{TRUE} if successful
 }
 \description{
-This function creates a test database with 100 accounts and 1000 transactions for trying out stuff.
+This function creates a test database with 100 accounts and 1000 
+transactions for trying out stuff.
 }
 

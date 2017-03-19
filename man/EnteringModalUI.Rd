@@ -9,20 +9,23 @@ EnteringModalUI(id, open_modal)
 \arguments{
 \item{id}{\code{chr} identifier used in shiny session}
 
-\item{open_modal}{\code{reactive} for triggering the modal (e.g. \code{actionButton})}
+\item{open_modal}{\code{reactive} for triggering the modal 
+(e.g. \code{actionButton})}
 }
 \value{
 \code{chr} html code of UI
 }
 \description{
-A module for a modal with multiple pages for entering transactions into the database.
+A module for a modal with multiple pages for entering transactions into 
+the database.
 }
 \details{
 This is the UI part of the module.
 A modal with 4 pages is created.
 \enumerate{
    \item Checking and correcting new accounts found in uploaded transactions
-   \item Checking and correcting predictions made by machine learning algorithm about new transactions
+   \item Checking and correcting predictions made by machine learning 
+         algorithm about new transactions
    \item Noting whether duplicated transactions should be entered anyway
    \item Confirming sucessful finish
 }

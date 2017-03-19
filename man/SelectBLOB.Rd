@@ -11,13 +11,15 @@ SelectBLOB(name, db, table = "storage")
 
 \item{db}{\code{chr} full file name with path of database}
 
-\item{table}{\code{chr} (="storage") name of the storage table in db}
+\item{table}{\code{chr} (="storage") name of the storage table
+in db}
 }
 \value{
 \code{R} object selected
 }
 \description{
-Convenience function to retrieve any kind of BLOB stored in table \emph{storage} of SQLite database
+Convenience function to retrieve any kind of BLOB stored in table 
+\emph{storage} of SQLite database
 }
 \examples{
 db <- "db/test.db"

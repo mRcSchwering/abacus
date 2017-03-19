@@ -13,23 +13,32 @@ EnteringModal(input, output, session, open_modal, tas, db)
 
 \item{session}{\code{list} from shiny session}
 
+\item{open_modal}{\code{reactive} used as trigger to open the modal}
+
+\item{tas}{\code{reactive} which stores the initial transactions 
+object created by \code{\link{Read_csv}} function}
+
 \item{db}{\code{chr} of database file (full path and file name)}
 }
 \value{
 \code{TRUE}
 }
 \description{
-A module for a modal with multiple pages for entering transactions into the database.
+A module for a modal with multiple pages for entering transactions 
+into the database.
 }
 \details{
 This is the server logic of the module.
 While the user goes through 4 pages in the modal following is done.
 \enumerate{
-   \item \code{\link{Read}} method extracts new accountss from \emph{transactions} object.
-   \item \code{\link{Predict}} method enters new accounts into the database and 
-   then predicts each transaction.
-   \item \code{\link{Duplicated}} reads the database to see if transactions were already entered.
-   \item \code{\link{Enter}} finally inserts new transaction into the database.
+   \item \code{\link{Read}} method extracts new accountss from 
+         \emph{transactions} object.
+   \item \code{\link{Predict}} method enters new accounts into the database 
+         and then predicts each transaction.
+   \item \code{\link{Duplicated}} reads the database to see if transactions 
+         were already entered.
+   \item \code{\link{Enter}} finally inserts new transaction into the 
+         database.
 }
 }
 \examples{

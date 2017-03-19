@@ -1,43 +1,59 @@
 #' Insert
 #'
-#' Convenience function to write a \code{data.frame} or \code{matrix} into a database table.
-#' The first column id will be added and incremented automatically if \code{add_id} is enabled.
+#' Convenience function to write a \code{data.frame} or \code{matrix} into a 
+#' database table. The first column id will be added and incremented 
+#' automatically if \code{add_id} is enabled.
 #'
 #' @family SQLite handler functions
 #'
-#' @param data                 \code{data.frame} of data to be written into db table
+#' @param data                 \code{data.frame} of data to be written into db 
+#'                             table
 #' @param table                \code{chr} of table name
 #' @param db                   \code{chr} full file name with path of database
-#' @param enforce_foreign_keys \code{bool} (\code{TRUE}) whether to enforce rules on foreign keys
-#' @param add_id               \code{bool} (\code{FALSE}) whether 1st column named \emph{id} with values \code{NULL} should be added
-#'                             (will be autoincremented in table \emph{accounts})
+#' @param enforce_foreign_keys \code{bool} (\code{TRUE}) whether to enforce 
+#'                             rules on foreign keys
+#' @param add_id               \code{bool} (\code{FALSE}) whether 1st column 
+#'                             named \emph{id} with values \code{NULL} should 
+#'                             be added (will be autoincremented in table 
+#'                             \emph{accounts})
 #'
 #' @return \code{TRUE} if successful
 #'
 #' @examples
 #' db <- "db/test.db"
 #' Create_testDB(db)
-#' df <- data.frame(owner = "B. Clinton", iban = "IR98000020018267384", bic = "IR875TW78", type = "donations account")
+#' df <- data.frame(
+#'   owner = "B. Clinton", 
+#'   iban = "IR98000020018267384", 
+#'   bic = "IR875TW78", 
+#'   type = "donations account"
+#' )
 #' Insert(df, "accounts", "db/test.db", add_id = TRUE)
 #'
 #' @export
 #'
-Insert <- function( data, table, db, add_id = FALSE, enforce_foreign_keys = TRUE )
+Insert <- function(data, table, db, 
+                   add_id = FALSE, 
+                   enforce_foreign_keys = TRUE)
 {
   stopifnot(inherits(data, "data.frame"))
   
   # connect, set PRAGMA
   con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db)
-  if( enforce_foreign_keys ) DBI::dbGetQuery(con, "PRAGMA foreign_keys = ON;")
+  if (enforce_foreign_keys) DBI::dbGetQuery(con, "PRAGMA foreign_keys = ON;")
   
   # write in db
   cols <- paste0("@", names(data), collapse = ", ")
-  if( add_id ) cols <- paste("NULL", cols, sep = ", ")
-  DBI::dbGetQuery(con, sprintf("INSERT INTO %s VALUES (%s)", table, cols), 
-                  params = lapply(names(data), function(x) data[[x]]))
+  if (add_id) cols <- paste("NULL", cols, sep = ", ")
+  DBI::dbGetQuery(
+    con, 
+    sprintf("INSERT INTO %s VALUES (%s)", table, cols), 
+    params = lapply(names(data), function(x) data[[x]])
+  )
   
   # disconnect
   DBI::dbDisconnect(con)
+  
   return(TRUE)
 } 
 
@@ -78,6 +94,7 @@ InsertBLOB <- function( name, data, db, table = "storage" )
   
   # write in db
   res <- abacus::Insert(data, table, db)
+  
   return(res)
 } 
 

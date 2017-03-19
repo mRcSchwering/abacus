@@ -1,23 +1,34 @@
 #' Update
 #'
 #' Convenience function to update tables of a SQLite database.
-#' For each row of the updates (\code{data}), the function looks for rows in the database table which have the same values
-#' as \code{data} for the columns defined in \code{check}. These rows are updated with the information of that \code{data} row.
+#' For each row of the updates (\code{data}), the function looks for rows in the
+#' database table which have the same values as \code{data} for the columns 
+#' defined in \code{check}. These rows are updated with the information of that 
+#' \code{data} row.
 #'
 #' @family SQLite handler functions
 #'
-#' @param data                 \code{data.frame} of data to be written into db table
+#' @param data                 \code{data.frame} of data to be written into db 
+#'                             table
 #' @param table                \code{chr} of table name
-#' @param check                \code{chr} of column name(s) for which updated rows have to have equal content 
+#' @param check                \code{chr} of column name(s) for which updated 
+#'                             rows have to have equal content 
 #' @param db                   \code{chr} full file name with path of database
-#' @param enforce_foreign_keys \code{bool} (\code{TRUE}) whether to enforce rules on foreign keys
+#' @param enforce_foreign_keys \code{bool} (\code{TRUE}) whether to enforce 
+#'                             rules on foreign keys
 #'
 #' @return \code{TRUE} if successful
 #'
 #' @examples
 #' db <- "db/test.db"
 #' Create_testDB(db)
-#' df <- data.frame(id = 3:4, owner = rep("test",2), iban = rep("test",2), bic = rep("test",2), stringsAsFactors = FALSE)
+#' df <- data.frame(
+#'   id = 3:4, 
+#'   owner = rep("test",2), 
+#'   iban = rep("test",2), 
+#'   bic = rep("test",2), 
+#'   stringsAsFactors = FALSE
+#'  )
 #' Update(df, "accounts", "id", db)
 #' Select("accounts", db, eq = list(id = c(3,4)))
 #'
@@ -30,12 +41,20 @@ Update <- function( data, table, check, db, enforce_foreign_keys = TRUE )
   
   # conditions
   dates <- grepl("date|day", names(data))
-  if( any(dates) ) data[, dates] <- as.character(as.Date(data[, dates]))
-  wheres <- sapply(check, function(x) sprintf("%s = '%s'", x, data[[x]]))
-  if( !is.null(dim(wheres)) ) wheres <- apply(wheres, 1, paste, collapse = " AND ")
+  if (any(dates)){
+    data[, dates] <- as.character(as.Date(data[, dates]))
+  }
+  wheres <- vapply(
+    check, 
+    function(x) sprintf("%s = '%s'", x, data[[x]]),
+    character(nrow(data))
+  )
+  if (!is.null(dim(wheres))){ 
+    wheres <- apply(wheres, 1, paste, collapse = " AND ")
+  }
   
   # update row by row
-  for( i in 1:nrow(data) ){
+  for (i in 1:nrow(data)){
     
     # query
     cols <- paste0(names(data), " = ?", collapse = ", ")
@@ -43,10 +62,15 @@ Update <- function( data, table, check, db, enforce_foreign_keys = TRUE )
 
     # write db
     con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db)
-    if( enforce_foreign_keys ) DBI::dbGetQuery(con, "PRAGMA foreign_keys = ON;")
-    DBI::dbGetQuery(con, query, params = lapply(names(data), function(x) data[[x]][i]))
+    if(enforce_foreign_keys) DBI::dbGetQuery(con, "PRAGMA foreign_keys = ON;")
+    DBI::dbGetQuery(
+      con, 
+      query, 
+      params = lapply(names(data), function(x) data[[x]][i])
+    )
     DBI::dbDisconnect(con)
   }
+  
   return(TRUE)
 } 
 
@@ -87,6 +111,7 @@ UpdateBLOB <- function( name, data, db, table = "storage" )
   
   # write in db
   res <- abacus::Update(data, table, "name", db)
+  
   return(res)
 } 
 

@@ -4,16 +4,23 @@
 \alias{UploadSettingsUI}
 \title{UploadSettingsUI}
 \usage{
-UploadSettingsUI(id)
+UploadSettingsUI(id, helps = NULL)
 }
 \arguments{
 \item{id}{\code{chr} identifier used in shiny session}
+
+\item{helps}{\code{NULL} or \code{list} with named strings as 
+elements for help texts used in UI elements. Names 
+correspond to elements and must be: \emph{mainDescr},
+\emph{btnSave_modal}, \emph{btnSave_pop}, 
+\emph{uploadSettings_pop}, \emph{div_upload_pop}}
 }
 \value{
 \code{chr} html code of UI
 }
 \description{
-UploadSettings module provides UI input elements and server logic for defining, saving and retrieving
+UploadSettings module provides UI input elements and server logic for 
+defining, saving and retrieving
 upload settings, and for uploading a csv table with transactions.
 }
 \details{
@@ -27,21 +34,25 @@ or a new setting name can be entered.
 A button next to it saves these settings (a modal will indicate success).
 There is a upload button or uploading csv or txt tables.
 
-In the second row, a lot of settings for reading and interpreting the table are located.
+In the second row, a lot of settings for reading and interpreting the table 
+are located.
 These are numeric, select, selectize, and checkbox inputs.
 They cover:
 \itemize{
-   \item column numbers for all necessary information (like \emph{name}, \emph{IBAN}, \emph{date}...)
+   \item column numbers for all necessary information (like \emph{name}, 
+         \emph{IBAN}, \emph{date}...)
    \item reference account of the uploaded transactions
    \item date format used in the \emph{date} column of the table
    \item decimal and column separators
    \item whether the first line of the file contains column headings
-   \item how many lines should be skipped and the maximum number of lines to read in the uploaded file
+   \item how many lines should be skipped and the maximum number of lines to
+         read in the uploaded file
 }
 
 Some basic css styles are defined within this module.
 Classes are always prefixed with the \code{id}.
-Best look into the source code of this function to see all the classes defined in the beginning.
+Best look into the source code of this function to see all the classes 
+defined in the beginning.
 }
 \examples{
 
