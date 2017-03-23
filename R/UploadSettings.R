@@ -39,9 +39,10 @@
 #' @param id              \code{chr} identifier used in shiny session
 #' @param helps           \code{NULL} or \code{list} with named strings as 
 #'                        elements for help texts used in UI elements. Names 
-#'                        correspond to elements and must be: \emph{mainDescr},
-#'                        \emph{btnSave_modal}, \emph{btnSave_pop}, 
-#'                        \emph{uploadSettings_pop}, \emph{div_upload_pop}
+#'                        correspond to elements where texts can be changed: 
+#'                        \emph{mainDescr}, \emph{btnSave_modal}, 
+#'                        \emph{btnSave_pop}, \emph{uploadSettings_pop}, 
+#'                        \emph{div_upload_pop}
 #' 
 #' @return \code{chr} html code of UI
 #' 
@@ -63,14 +64,19 @@ UploadSettingsUI <- function(id, helps = NULL)
   )
   
   # make help texts
+  preHelps <- list(
+    mainDescr = p("This is an upload page."),
+    btnSave_modal = p("Current settings were saved."),
+    btnSave_pop = p("Save the current settings."),
+    uploadSettings_pop = p("Chose saved settings."),
+    div_upload_pop = p("Upload a table.")
+  )
   if (is.null(helps)) {
-    helps <- list(
-      mainDescr = p("This is an upload page."),
-      btnSave_modal = p("Current settings were saved."),
-      btnSave_pop = p("Save the current settings."),
-      uploadSettings_pop = p("Chose saved settings."),
-      div_upload_pop = p("Upload a table.")
-    )
+    helps <- preHelps
+  } else {
+    for (i in names(preHelps)) {
+      if (is.null(helps[[i]])) { helps[[i]] <- preHelps[[i]] }
+    }
   }
   
   # styles for this modal only
@@ -196,6 +202,17 @@ UploadSettingsUI <- function(id, helps = NULL)
 #' @param output          \code{list} from shiny session
 #' @param session         \code{list} from shiny session
 #' @param db              \code{chr} of database file (full path and file name)
+#' @param helps           \code{NULL} or \code{list} with named strings as 
+#'                        elements for help texts used in UI elements. Names 
+#'                        correspond to elements where texts can be changed: 
+#'                        \emph{refAcc_type}, \emph{nameCol}, 
+#'                        \emph{ibanCol}, \emph{bicCol}, 
+#'                        \emph{dateCol}, \emph{refCol}
+#'                        \emph{bookCol}, \emph{valueCol}, 
+#'                        \emph{currCol}, \emph{colSep}, 
+#'                        \emph{decSep}, \emph{nSkip}, 
+#'                        \emph{maxLines}, \emph{headerBool}, 
+#'                        \emph{dateFormat}
 #' 
 #' @return \code{list} of 3 elements
 #' \itemize{
@@ -220,6 +237,32 @@ UploadSettings <- function(input, output, session, db, helps = NULL)
   settings <- allSettings$upload
   settings <- rev(settings)
   refAccounts <- Select("personalAccounts", db)$type
+  
+  # make help texts
+  preHelps <- list(
+    refAcc_type = "What is the reference account?",
+    nameCol = "The owner's name",
+    ibanCol = "IBAN of the account",
+    bicCol = "BIC of the account",
+    dateCol = "Date of the transaction",
+    refCol = "Reference text",
+    bookCol = "Booking entry",
+    valueCol = "Amount of transaction",
+    currCol = "Currency symbol",
+    colSep = "Column separator",
+    decSep = "Decimal separator",
+    nSkip = "Lines to skip from top",
+    maxLines = "Maximum number of lines to read",
+    headerBool = "Whether the 1st line is a header",
+    dateFormat = "How the date is formatted"
+  )
+  if (is.null(helps)) {
+    helps <- preHelps
+  } else {
+    for (i in names(preHelps)) {
+      if (is.null(helps[[i]])) { helps[[i]] <- preHelps[[i]] }
+    }
+  }
   
   # fallback in case nothing is saved
   if (is.null(settings)) {
@@ -267,7 +310,7 @@ UploadSettings <- function(input, output, session, db, helps = NULL)
       selectInput(ns("accountType"), "reference account", 
                   refAccounts, selected = selected),
       "Reference Account Type", 
-      "To which of your accounts do these transactions belong to?", 
+      helps$refAcc_type, 
       placement = "right"
     )
     ref <- div(class = ns("style_ref"), ref)
@@ -283,52 +326,50 @@ UploadSettings <- function(input, output, session, db, helps = NULL)
       shinyBS::popify(
         numericInput(ns("nameCol"), "name", fileCols$name, min = 1),
         "Name Column", 
-        "Which column in the table contains the account owner´s names?", 
+        helps$nameCol, 
         placement = "right"
       ),
       shinyBS::popify(
         numericInput(ns("ibanCol"), "IBAN", fileCols$iban, min = 1),
         "IBAN Column", 
-        "Which columns in the table contains the account IBAN?", 
+        helps$ibanCol, 
         placement = "right"
       ),
       shinyBS::popify(
         numericInput(ns("bicCol"), "BIC", fileCols$bic, min = 1),
         "BIC Column", 
-        "Which columns in the table contains the account BIC?", 
+        helps$bicCol, 
         placement = "right"
       ),
       shinyBS::popify(
         numericInput(ns("dateCol"), "date", fileCols$date, min = 1),
         "Date Column", 
-        "Which columns in the table contains the transaction date?", 
+        helps$dateCol, 
         placement = "right"
       ),
       shinyBS::popify(
         numericInput(ns("referenceCol"), "reference", 
                      fileCols$reference, min = 1),
         "Reference Column", 
-        paste("There usually is a reference text and a book entry text.", 
-              "Which column contains the reference text?"), 
+        helps$refCol, 
         placement = "right"
       ),
       shinyBS::popify(
         numericInput(ns("entryCol"), "entry", fileCols$entry, min = 1),
         "Book Entry Column", 
-        paste("There usually is a reference text and a book entry text.", 
-              "Which column contains the book entry text?"), 
+        helps$bookCol, 
         placement = "right"
       ),
       shinyBS::popify(
         numericInput(ns("valueCol"), "value", fileCols$value, min = 1),
         "Value Column", 
-        "Which columns contains the transacted ammount?", 
+        helps$valueCol, 
         placement = "right"
       ),
       shinyBS::popify(
         numericInput(ns("currencyCol"), "currency", fileCols$currency, min = 1),
         "Currency Column", 
-        "Which column contains the currency symbol?", 
+        helps$currCol, 
         placement = "right"
       )
     )
@@ -345,18 +386,14 @@ UploadSettings <- function(input, output, session, db, helps = NULL)
         selectInput(ns("colSep"), "col sep", 
                     list(tab = "\t", ";", ",", ":"), selected = selected[1]),
         "Column Separator", 
-        paste("Every table uses a symbol to separate columns.", 
-              "Which one is used here? If you don´t know, just try them out."), 
+        helps$colSep, 
         placement = "right"
       ),
       shinyBS::popify(
-        selectInput(ns("decSep"), "dec sep", list(".", ","), 
-                    selected = selected[2]),
+        selectInput(ns("decSep"), "dec sep", 
+                    list(".", ","), selected = selected[2]),
         "Decimal Separator", 
-        paste("In Germany decimals are separated by a comma,", 
-              "in other countries by a period. Which one is needed here.",
-              "You can just try out which one works.",
-              "If decimal numbers are preserved they were read correctly."), 
+        helps$decSep, 
         placement = "right"
       )
     )
@@ -368,15 +405,13 @@ UploadSettings <- function(input, output, session, db, helps = NULL)
       shinyBS::popify(
         numericInput(ns("skip"), "skip lines", min = 0, value = selected[1]),
         "Number of Lines to Skip", 
-        paste("Do the first lines contain some text which", 
-              "does not belong to the actual table?"), 
+        helps$nSkip, 
         placement = "right"
       ),
       shinyBS::popify(
         numericInput(ns("max"), "max lines", min = -1, value = selected[2]),
         "Maximum Number of Lines to Read", 
-        paste("Do the last lines contain some text which does not belong to",
-              "the actual table? <b>-1</b> to read all lines."), 
+        helps$maxLines, 
         placement = "right"
       )
     )
@@ -387,8 +422,7 @@ UploadSettings <- function(input, output, session, db, helps = NULL)
     hd <- shinyBS::popify(
       checkboxInput(ns("hdBl"), "1st line as column names", value = selected),
       "1st Line are Columns Names",
-      paste("Often the 1st line contains the column names.",
-            "It does not contain actual values."), 
+      helps$headerBool, 
       placement = "right"
     )  
     hd <- div(class = ns("style_hd"), hd)
@@ -406,18 +440,7 @@ UploadSettings <- function(input, output, session, db, helps = NULL)
         multiple = TRUE
       ),
       "Date Formatting", 
-      paste(
-        "In the date column, how is the date written?", 
-        "Provide the correct formatting.<br/>",
-        "It works like this:<br/><b>%Y</b> is the year in 4 digits,", 
-        "<b>%y</b> in 2 digits, <b>%m</b> is the month in 2 digits,", 
-        "<b>%d</b> is the day in 2 digits.",
-        "Write the date by replacing year, month, day.",
-        "Then confirm by clicking on <b>Add</b>.<br/>Examples:<br/>",
-        "<em>%d.%m.%Y</em> for 13.03.1990<br/>",
-        "<em>%Y-%m-%d</em> for 1990-03-13<br/>",
-        "<em>%Y/%m/%d</em> for 1990/03/13<br/>"
-      ), 
+      helps$dateFormat, 
       placement = "right"
     )
     dt <- div(class = ns("style_dt"), dt)

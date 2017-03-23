@@ -1,14 +1,19 @@
 #' CV
 #'
-#' This function trains a shrinkage discriminant analysis (sda) classifier as in \code{\link{Training}} in a \code{k}-fold 
+#' This function trains a shrinkage discriminant analysis (sda) classifier as 
+#' in \code{\link{Training}} in a \code{k}-fold 
 #' cross validation.
-#' A \code{data.frame} with class labels and predictions is returned which can be used for prediction power estimation.
+#' A \code{data.frame} with class labels and predictions is returned which can 
+#' be used for prediction power estimation.
 #'
 #' @family machine learning
 #'
-#' @param abt              \code{num matrix} containing training data with rows as observations and columns as features
-#' @param labs             \code{vector} defining class labels of rows in training data
-#' @param feats            \code{data.frame} with columns \emph{name} and \emph{value} which identifies the features (columns)
+#' @param abt              \code{num matrix} containing training data with rows 
+#'                         as observations and columns as features
+#' @param labs             \code{vector} defining class labels of rows in 
+#'                         training data
+#' @param feats            \code{data.frame} with columns \emph{name} and 
+#'                         \emph{value} which identifies the features (columns)
 #'                         of \code{abt} with \code{chr} values
 #' @param ...              arguments passed to \code{link{Training}}
 #' 
@@ -23,17 +28,17 @@
 #'
 #' @export
 #'
-CV <- function( abt, feats, labs, k = 5, ... )
+CV <- function(abt, feats, labs, k = 5, ...)
 {
   stopifnot(ncol(abt) == nrow(feats), length(labs) == nrow(abt))
-  if(k < 1) stop("k must be greater 0 you idiot!")
+  if (k < 1) stop("k must be greater 0 you idiot!")
   
   # error estimation
   err <- data.frame(class = character(), prediction = character())  
   
   # for in k
   ks <- sample(1:k, nrow(abt), replace = TRUE)
-  for( i in 1:k ){
+  for (i in 1:k) {
     
     # data in test and train
     test <- abt[ks == i, ]

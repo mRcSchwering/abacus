@@ -2,14 +2,15 @@
 #'
 #' Generic function for inserting new rows in database.
 #' \code{\link{Enter.Transactions}} is used with a
-#' \emph{Transactions} object (created with \code{\link{Duplicated.Transactions}})
+#' \emph{Transactions} object (created with 
+#' \code{\link{Duplicated.Transactions}})
 #' to insert transactions into the database.
 #' 
 #' @family procedures
 #' 
 #' @export
 #'
-Enter <- function (x, ...) {
+Enter <- function(x, ...) {
   UseMethod("Enter", x)
 }
 
@@ -19,15 +20,17 @@ Enter <- function (x, ...) {
 
 #' Enter.Transactions
 #'
-#' This function uses a \emph{Transactions} object as created with \code{\link{Duplicated.Transactions}} and
+#' This function uses a \emph{Transactions} object as created with 
+#' \code{\link{Duplicated.Transactions}} and
 #' inserts it into the \emph{transactions} table of the database.
 #' The \emph{Prediction} list object is used for this.
 #' Transactions marked as duplicated are not entered.
-#' This can be controlled with the \code{bool} column of the \emph{Duplicated} list element.
+#' This can be controlled with the \code{bool} column of the \emph{Duplicated} 
+#' list element.
 #' 
 #' \enumerate{
-#'     \item \emph{Duplicated} rows as indicated by the \code{bool} column of the eponymous list element
-#'     are removed
+#'     \item \emph{Duplicated} rows as indicated by the \code{bool} column of 
+#'     the eponymous list element are removed
 #'     \item \emph{Columns} are adjusted to database table
 #'     \item Correct \emph{formatting} of columns is ensured
 #'     \item Data is \emph{inserted} into \emph{transactions} table of database
@@ -35,7 +38,8 @@ Enter <- function (x, ...) {
 #'
 #' @family procedures
 #'
-#' @param x          \code{Transactions} object (created with \code{\link{Duplicated.Transactions}})
+#' @param x          \code{Transactions} object 
+#'                   (created with \code{\link{Duplicated.Transactions}})
 #' 
 #' @return 
 #' \code{TRUE}
@@ -44,12 +48,17 @@ Enter <- function (x, ...) {
 #' db <- "test.db"
 #' Create_testDB(db)
 #' 
-#' params <- list(nFeats = 200, DDL = FALSE, time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1")))
+#' params <- list(
+#'   nFeats = 200, 
+#'   DDL = FALSE, 
+#'   time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1"))
+#' )
 #' InsertBLOB("Params", params, db)
 #' Update_Predictor(db)
 #' 
 #' f <- system.file("extdata", "test_transactions.csv", package = "abacus")
-#' cols <- list(name = 6, iban = 7, bic = 8, date = 3, reference = 5, entry = 4, value = 9, currency = 10)
+#' cols <- list(name = 6, iban = 7, bic = 8, date = 3, 
+#'              reference = 5, entry = 4, value = 9, currency = 10)
 #' tas <- Read_csv("giro", f, cols, db)
 #' tas <- Read(tas)
 #' tas$NewAccounts$owner[3] <- "New Owner 3"
@@ -64,16 +73,19 @@ Enter <- function (x, ...) {
 #' 
 #' @export
 #'
-Enter.Transactions <- function( x )
+Enter.Transactions <- function(x)
 {
-  if( !"Duplicated" %in% names(x) ) stop("Find duplicated transactions with Duplicated first")
+  if (!"Duplicated" %in% names(x)) {
+    stop("Find duplicated transactions with Duplicated first")
+  }
   stopifnot(nrow(x$Duplicated) == nrow(x$Prediction))
   
   # remove marked rows
   df <- x$Prediction[!x$Duplicated$bool, ]
   
   # only keep these cols
-  cols <- c("payor_id", "payee_id", "date", "reference", "entry", "value", "currency", "type")
+  cols <- c("payor_id", "payee_id", "date", "reference", 
+            "entry", "value", "currency", "type")
   df <- df[, names(df) %in% cols]
   
   # ensure formats

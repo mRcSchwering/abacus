@@ -18,7 +18,8 @@ Create_testDB <- function(dbName = "test.db")
   dbName <- file.path(getwd(), dbName)
   
   # read database schema
-  schema <- readLines(system.file("extdata", "database_schema", package = "abacus"))
+  schema <- readLines(system.file("extdata", "database_schema", 
+                                  package = "abacus"))
   schema <- schema[schema != ""]
   
   # create commands
