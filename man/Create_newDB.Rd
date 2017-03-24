@@ -16,4 +16,3 @@ file (and path)}
 \description{
 This function creates a new empty database.
 }
-

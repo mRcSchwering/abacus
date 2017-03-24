@@ -7,22 +7,25 @@
 \method{Enter}{Transactions}(x)
 }
 \arguments{
-\item{x}{\code{Transactions} object (created with \code{\link{Duplicated.Transactions}})}
+\item{x}{\code{Transactions} object 
+(created with \code{\link{Duplicated.Transactions}})}
 }
 \value{
 \code{TRUE}
 }
 \description{
-This function uses a \emph{Transactions} object as created with \code{\link{Duplicated.Transactions}} and
+This function uses a \emph{Transactions} object as created with 
+\code{\link{Duplicated.Transactions}} and
 inserts it into the \emph{transactions} table of the database.
 The \emph{Prediction} list object is used for this.
 Transactions marked as duplicated are not entered.
-This can be controlled with the \code{bool} column of the \emph{Duplicated} list element.
+This can be controlled with the \code{bool} column of the \emph{Duplicated} 
+list element.
 }
 \details{
 \enumerate{
-    \item \emph{Duplicated} rows as indicated by the \code{bool} column of the eponymous list element
-    are removed
+    \item \emph{Duplicated} rows as indicated by the \code{bool} column of 
+    the eponymous list element are removed
     \item \emph{Columns} are adjusted to database table
     \item Correct \emph{formatting} of columns is ensured
     \item Data is \emph{inserted} into \emph{transactions} table of database
@@ -32,12 +35,17 @@ This can be controlled with the \code{bool} column of the \emph{Duplicated} list
 db <- "test.db"
 Create_testDB(db)
 
-params <- list(nFeats = 200, DDL = FALSE, time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1")))
+params <- list(
+  nFeats = 200, 
+  DDL = FALSE, 
+  time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1"))
+)
 InsertBLOB("Params", params, db)
 Update_Predictor(db)
 
 f <- system.file("extdata", "test_transactions.csv", package = "abacus")
-cols <- list(name = 6, iban = 7, bic = 8, date = 3, reference = 5, entry = 4, value = 9, currency = 10)
+cols <- list(name = 6, iban = 7, bic = 8, date = 3, 
+             reference = 5, entry = 4, value = 9, currency = 10)
 tas <- Read_csv("giro", f, cols, db)
 tas <- Read(tas)
 tas$NewAccounts$owner[3] <- "New Owner 3"
@@ -60,4 +68,3 @@ Other procedures: \code{\link{Duplicated.Transactions}},
   \code{\link{Read_csv}}, \code{\link{Read}},
   \code{\link{Update_Predictor}}
 }
-

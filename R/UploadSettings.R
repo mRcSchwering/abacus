@@ -108,7 +108,7 @@ UploadSettingsUI <- function(id, helps = NULL)
     id = ns("settingsSaved"), 
     title = "Settings Saved", 
     trigger = ns("btnSave"), 
-    helps$btnSave_modal
+    HTML(helps$btnSave_modal)
   )
   
   # input elements

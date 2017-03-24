@@ -9,7 +9,8 @@ Enter(x, ...)
 \description{
 Generic function for inserting new rows in database.
 \code{\link{Enter.Transactions}} is used with a
-\emph{Transactions} object (created with \code{\link{Duplicated.Transactions}})
+\emph{Transactions} object (created with 
+\code{\link{Duplicated.Transactions}})
 to insert transactions into the database.
 }
 \seealso{
@@ -22,4 +23,3 @@ Other procedures: \code{\link{Duplicated.Transactions}},
   \code{\link{Read_csv}}, \code{\link{Read}},
   \code{\link{Update_Predictor}}
 }
-

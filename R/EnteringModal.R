@@ -26,19 +26,23 @@
 #' 
 #' @export
 #'
-EnteringModalUI <- function(id, open_modal) 
+EnteringModalUI <- function(id, open_modal, helps) 
 {
   ns <- NS(id)
   
   # styles
   style <- tags$head(tags$style(
-    HTML(
-      sprintf(".%s { color: red; }", ns("errmsg")),
-      sprintf(".%s { margin-bottom: 0px; }", ns("chown")),
-      sprintf(".%s { margin-top: -5px; }", ns("chown")),
-      sprintf(".%s { width: 250px; }", ns("chown")),
-      sprintf(".%s { height: 30px; }", ns("chown"))
-    )
+    HTML(paste0("
+      .", ns("errmsg"), " { color: red; }
+      .", ns("chown"), 
+          " { margin-bottom: 0px; margin-top: -5px; 
+            width: 250px; height: 30px; }
+      .", ns("pred"), " { margin-left: 5%; }
+      .", ns("pred_dl"), " { display: inline-block; margin-left: 20px }
+      .", ns("pred_select"), 
+          " { display: inline-block; vertical-align: top; 
+            margin-top: 35px; width: 200px; }"
+    ))
   ))
   
   # building the modal
@@ -52,50 +56,31 @@ EnteringModalUI <- function(id, open_modal)
       # Page 1
       div(class = "page", id = ns("page1"), 
         h3("New Accounts"), 
-        p("These accounts are not in the database yet.
-          Please check if you want to enter them like this."),
-        p("For owner names please only use", strong("letters"), 
-          "and", strong("numbers.")),
+        HTML(helps$newAccounts_head),
         DT::dataTableOutput(ns("newAccounts")),
-        p("With a click on ", strong("Next"), 
-          " the new accounts are entered into the database -- if there were any.
-          If you want to abort, just close this window. 
-          Nothing has been entered yet.")
+        HTML(helps$newAccounts_foot)
       ),
       
       # Page 2
       div(class = "page", id = ns("page2"), 
         h3("Predictions"), 
-        p("For each transaction the following labels were predicted. 
-          Please check if they are correct.
-          If not correct them."),
-        p(strong("Predictions")),
-        p("With a click on ", strong("Next"), 
-          " the provided labels are double checked. 
-          The transactions are not entered yet.
-          If you want to abort you can do that by closing this window.
-          So far, only new accounts from the previous page were entered.")
+        HTML(helps$predictions_head),
+        uiOutput(ns("predictions")),
+        HTML(helps$predictions_foot)
       ),
       
       # Page 3
       div(class = "page", id = ns("page3"), 
         h3("Duplicated"),
-        p("These transactions were already found in the database.
-          They are assumed to be duplicates. 
-          If not check them and they will be entered anyway."),
+        HTML(helps$duplicated_head),
         p(strong("Duplicates")),
-        p("With a click on ", strong("Next"),
-          " these transactions are entered into the database.
-          If you want to abort you can do that by closing this window.
-          You can also go to the previous window and correct the ", em("types"),
-          ". So far, only the new accounts from", 
-          "the previous page were entered.")
+        HTML(helps$duplicated_foot)
       ),
       
       # Page 4
       div(class = "page", id = ns("page4"), 
         h3("Finish"), 
-        p("Transactions were successfully entered into the database.")  
+        HTML(helps$finish)
       )
     )),
     
@@ -160,20 +145,21 @@ EnteringModal <- function(input, output, session, open_modal, tas, db)
   ns <- session$ns
   
   # reactive values
-  status <- reactiveValues(page = 1, err = FALSE, msg = "", tas = NULL)
+  status <- reactiveValues(page = 1, err = FALSE, msg = "", 
+                           tas = NULL, types = character())
   
   # before Page 1 (Page 0)
+  # read transactions table and read unique types
   # run Read method to identify new accounts
+  # always set page to 1 when opening modal
   observeEvent(open_modal(), status$page <- 1)
   observeEvent(list(open_modal(), tas()), {
-    if (!is.null(tas())) status$tas <- Read(tas())
+    status$types <- .Get_types(db)
+    if (!is.null(tas())) { status$tas <- Read(tas()) }
   })
   
-  # Page 1
-  # show new accounts in a table with option to make owner name changes
-  # upon click replace old owner names with the ones entered and 
-  # try to run Predict method
-  # if successful update tas object
+  # create a datatable showing new accounts if there are some
+  # show as textinput, so user can change them
   output$newAccounts <- DT::renderDataTable({
     if (is.null(status$tas$NewAccounts) || nrow(status$tas$NewAccounts) < 1) {
       dt <- data.frame("No" = "No", "New" = "New", "Accounts" = "Accounts")
@@ -189,13 +175,69 @@ EnteringModal <- function(input, output, session, open_modal, tas, db)
     nas$owner <- txtIns
     Table(nas, esc = FALSE)
   })
+  
+  # create datatable showing predictions
+  # show as selectize input, so user can change them
+  # selectize has unique type values found in db as options
+  # but user can also enter new one
+  output$predictions <- renderUI({
+    if (nrow(status$tas$Prediction) < 1) {
+      el <- p("There are no predictions to show", class = "placeholder")
+      return(el)
+    }
+    preds <- status$tas$Prediction
+    els <- lapply(
+      1:nrow(preds),
+      function(idx) { 
+        select <- selectizeInput(
+          ns(paste0("pred", idx)), 
+          NULL, 
+          status$types, 
+          preds$`predicted type`[idx],
+          multiple = TRUE,
+          options = list(maxItems = 1, create = TRUE)
+        )
+        decList <- tags$dl(
+          tags$dt(preds$date[idx]),
+          tags$dd(preds$value[idx], preds$currency[idx]),
+          tags$dt("From"),
+          tags$dd(preds$payor_owner[idx]),
+          tags$dt("To"),
+          tags$dd(preds$payee_owner[idx]),
+          tags$dt("Reference"),
+          tags$dd(preds$reference[idx]),
+          tags$dt("Entry"),
+          tags$dd(preds$entry[idx])
+        )
+        tagList(div(
+          class = ns("pred"), 
+          div(select, class = ns("pred_select")), 
+          div(decList, class = ns("pred_dl"))
+        ))
+      }
+    )
+    tagList(els)
+  })
+  
+  # Modal Pages
+  # procedure functions can be executed with click on Next button
+  # page number decides which methods are executed
+  # reactive values status holds the objects
   observeEvent(input$btnNext, {
-    if( status$page == 1 ){
-      status$err <- FALSE
-      status$msg <- ""
-      tas <- status$tas
-      if( nrow(tas$NewAccounts) > 0){
-        txtIns <- sapply(
+    status$err <- FALSE
+    status$msg <- ""
+    tas <- status$tas
+  
+    # Page 1
+    # before click user sees table with new accounts found in transactions
+    # he was able to change them by entering new owner names
+    # upon click text inputs for owner name changes are read
+    # current owner names are replaced with user input
+    # Predict method is run in try, if successful update tas object
+    # if not page is not incremented and msg is shown
+    if (status$page == 1) {
+      if (nrow(tas$NewAccounts) > 0) {
+        txtIns <- vapply(
           1:nrow(tas$NewAccounts), 
           function(idx) as.character(input[[paste0("chown", idx)]]),
           character(1)
@@ -210,16 +252,48 @@ EnteringModal <- function(input, output, session, open_modal, tas, db)
         status$tas <- res
       }
     }
+      
+    # Page 2
+    # before click user sees table with predictions
+    # user can change predictions via text inputs
+    # upon click user inputs are read, current predctions are replaced
+    # Duplicated method is run in try, if successful update tas object
+    # if not page is not incremented, msg is shown
+    if (status$page == 2) {
+      print("Page 2 executing")
+      txtIns <- vapply(
+        1:nrow(tas$Prediction), 
+        function(idx) {
+          type <- input[[paste0("pred", idx)]]
+          if (length(type) != 1) {
+            return("")
+          } else {
+            return(as.character(type))
+          }
+        },
+        character(1)
+      )
+      tas$Prediction$`predicted type` <- txtIns
+      res <- try(Duplicated(tas))
+      if (inherits(res, "try-error")) {
+        status$err <- TRUE
+        status$msg <- attr(res, "condition")$message
+      } else {
+        status$tas <- res
+      }
+    }
   })
   
-  # Page 2
-  # predictions are shown with option to correct them
+  
   
   
   observeEvent(status$tas,print(status$tas))
   
   
   # multiple pages logic
+  # show error message if there is one
+  # enable/disable "prev" "next" buttons depending on page
+  # de-/increment page if not error happened
   output$errormsg <- renderUI(div(class = ns("errmsg"), status$msg))
   observeEvent(status$page, {
     shinyjs::toggleState(id = "btnPrev", condition = status$page == 3)

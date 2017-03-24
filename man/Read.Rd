@@ -8,7 +8,8 @@ Read(x, ...)
 }
 \description{
 Generic function for reading objects.
-\code{\link{Read.Transactions}} is used to read a \emph{Transactions} object (created with \code{\link{Read_csv}} for example).
+\code{\link{Read.Transactions}} is used to read a \emph{Transactions} 
+object (created with \code{\link{Read_csv}} for example).
 }
 \seealso{
 Other procedures: \code{\link{Duplicated.Transactions}},
@@ -19,4 +20,3 @@ Other procedures: \code{\link{Duplicated.Transactions}},
   \code{\link{Predict}}, \code{\link{Read.Transactions}},
   \code{\link{Read_csv}}, \code{\link{Update_Predictor}}
 }
-

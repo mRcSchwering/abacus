@@ -5,7 +5,7 @@ while adding delay to options
 shinyBS.addTooltip = function(id, type, opts) {
   var $id = shinyBS.getTooltipTarget(id);
   var dopts = {html: true};
-  opts = $.extend(opts, dopts, {delay: {show: "1500", hide: "100"}});
+  opts = $.extend(opts, dopts, {delay: {show: "2000", hide: "100"}});
 
   if(type == "tooltip") {
     $id.tooltip("destroy");

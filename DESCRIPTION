@@ -11,4 +11,4 @@ Suggests: knitr, rmarkdown, sda, RSQLite, DBI, shiny, shinydashboard, shinyjs, s
 Description: Collect and classify personal cash flows in a database contained in one file.
 License: What license is it under?
 LazyData: TRUE
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

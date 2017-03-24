@@ -33,6 +33,9 @@ abacusApp <- function(db)
   uploadSettings_helps <- .Read_html(
     system.file("www", "helptext_UploadSettings.html", package = "abacus")
   )
+  enteringModal_helps <- .Read_html(
+    system.file("www", "helptext_EnteringModal.html", package = "abacus")
+  )
   
   # Dashboard Sidebar UI
   dashboard_sidebar <- dashboardSidebar(
@@ -61,7 +64,11 @@ abacusApp <- function(db)
     # tabs
     tabItems(
       tabItem("tab_enter_tas", 
-        EnteringModalUI("enter_tas", open_modal = "btn_enter_tas"),
+        EnteringModalUI(
+          "enter_tas", 
+          open_modal = "btn_enter_tas",
+          helps = enteringModal_helps
+        ),
         fluidRow(
           box(title = "Settings", 
               UploadSettingsUI("upload_tas", helps = uploadSettings_helps)),
@@ -139,10 +146,13 @@ abacusApp <- function(db)
           shinyjs::enable("btn_enter_tas")
       }
     })
-    callModule(EnteringModal, "enter_tas", 
-               open_modal = reactive(input$btn_enter_tas),
-               tas = reactive(uploadedTas()$tas), 
-               db = db)
+    callModule(
+      EnteringModal, 
+      "enter_tas", 
+      open_modal = reactive(input$btn_enter_tas),
+      tas = reactive(uploadedTas()$tas), 
+      db = db
+    )
     
     
     

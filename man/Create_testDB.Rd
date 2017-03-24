@@ -17,4 +17,3 @@ file (in current working dir)}
 This function creates a test database with 100 accounts and 1000 
 transactions for trying out stuff.
 }
-

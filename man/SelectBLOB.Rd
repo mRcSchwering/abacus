@@ -35,4 +35,3 @@ Other SQLite handler functions: \code{\link{InsertBLOB}},
   \code{\link{Select}}, \code{\link{UpdateBLOB}},
   \code{\link{Update}}
 }
-

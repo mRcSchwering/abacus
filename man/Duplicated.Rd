@@ -8,8 +8,9 @@ Duplicated(x, ...)
 }
 \description{
 Generic function for finding duplicates.
-\code{\link{Duplicated.Transactions}} is used to check whether transactions of a
-\emph{Transactions} object (created with \code{\link{Predict.Transactions}})
+\code{\link{Duplicated.Transactions}} is used to check whether transactions 
+of a \emph{Transactions} object 
+(created with \code{\link{Predict.Transactions}})
 are already present in the database.
 }
 \seealso{
@@ -21,4 +22,3 @@ Other procedures: \code{\link{Duplicated.Transactions}},
   \code{\link{Read_csv}}, \code{\link{Read}},
   \code{\link{Update_Predictor}}
 }
-

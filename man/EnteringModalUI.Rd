@@ -4,7 +4,7 @@
 \alias{EnteringModalUI}
 \title{EnteringModalUI}
 \usage{
-EnteringModalUI(id, open_modal)
+EnteringModalUI(id, open_modal, helps)
 }
 \arguments{
 \item{id}{\code{chr} identifier used in shiny session}
@@ -39,4 +39,3 @@ Other application functions: \code{\link{EnteringModal}},
   \code{\link{UploadSettingsUI}},
   \code{\link{UploadSettings}}, \code{\link{abacusApp}}
 }
-

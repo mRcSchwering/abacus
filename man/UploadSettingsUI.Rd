@@ -11,9 +11,10 @@ UploadSettingsUI(id, helps = NULL)
 
 \item{helps}{\code{NULL} or \code{list} with named strings as 
 elements for help texts used in UI elements. Names 
-correspond to elements and must be: \emph{mainDescr},
-\emph{btnSave_modal}, \emph{btnSave_pop}, 
-\emph{uploadSettings_pop}, \emph{div_upload_pop}}
+correspond to elements where texts can be changed: 
+\emph{mainDescr}, \emph{btnSave_modal}, 
+\emph{btnSave_pop}, \emph{uploadSettings_pop}, 
+\emph{div_upload_pop}}
 }
 \value{
 \code{chr} html code of UI
@@ -63,4 +64,3 @@ Other application functions: \code{\link{EnteringModalUI}},
   \code{\link{EnteringModal}},
   \code{\link{UploadSettings}}, \code{\link{abacusApp}}
 }
-

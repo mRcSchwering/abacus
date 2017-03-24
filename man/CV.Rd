@@ -7,12 +7,15 @@
 CV(abt, feats, labs, k = 5, ...)
 }
 \arguments{
-\item{abt}{\code{num matrix} containing training data with rows as observations and columns as features}
+\item{abt}{\code{num matrix} containing training data with rows 
+as observations and columns as features}
 
-\item{feats}{\code{data.frame} with columns \emph{name} and \emph{value} which identifies the features (columns)
+\item{feats}{\code{data.frame} with columns \emph{name} and 
+\emph{value} which identifies the features (columns)
 of \code{abt} with \code{chr} values}
 
-\item{labs}{\code{vector} defining class labels of rows in training data}
+\item{labs}{\code{vector} defining class labels of rows in 
+training data}
 
 \item{...}{arguments passed to \code{link{Training}}}
 }
@@ -20,9 +23,11 @@ of \code{abt} with \code{chr} values}
 \code{data.frame} with class labels and predictions by the classifier
 }
 \description{
-This function trains a shrinkage discriminant analysis (sda) classifier as in \code{\link{Training}} in a \code{k}-fold 
+This function trains a shrinkage discriminant analysis (sda) classifier as 
+in \code{\link{Training}} in a \code{k}-fold 
 cross validation.
-A \code{data.frame} with class labels and predictions is returned which can be used for prediction power estimation.
+A \code{data.frame} with class labels and predictions is returned which can 
+be used for prediction power estimation.
 }
 \examples{
 abt1 <- matrix(sample(0:1, 1000*100, replace = TRUE), 1000, 100)
@@ -37,4 +42,3 @@ Other machine learning: \code{\link{Convert}},
   \code{\link{FeatureExtraction}},
   \code{\link{Prediction}}, \code{\link{Training}}
 }
-

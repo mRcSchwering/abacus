@@ -25,4 +25,3 @@ Other application functions: \code{\link{EnteringModalUI}},
   \code{\link{UploadSettingsUI}},
   \code{\link{UploadSettings}}
 }
-

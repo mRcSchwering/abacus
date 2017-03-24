@@ -21,4 +21,3 @@ transactions
 This is used to create a test data base. They reference the table \emph{accounts}.
 }
 \keyword{datasets}
-

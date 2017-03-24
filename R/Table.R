@@ -28,6 +28,9 @@
 #'                     and \emph{left}. they can each be \code{NULL}(default) or
 #'                     a \code{num} arr for which columns to be aligned 
 #'                     accordingly. other columnss are right aligned
+#' @param  colWidth    \code{NULL} or \code{list} with 2 elements: \emph{width} 
+#'                     chr string for width and \emph{targets} int vector giving
+#'                     column indices. Only works if \code{bScroll TRUE}
 #' @param  formatCurr  \code{NULL} or \code{list} of 2 elements \emph{cols} 
 #'                     (\code{num arr}) and \emph{curr} (\code{chr}) for 
 #'                     currency formatting of \emph{cols} columns
@@ -57,7 +60,8 @@
 #'
 Table <- function(data, colNames = NULL, bRownames = FALSE, style = "default", 
                   class = "display", dom = "flrtip", ordering = NULL, 
-                  alignment = list(centre = NULL, justify = NULL, left = NULL), 
+                  alignment = list(centre = NULL, justify = NULL, left = NULL),
+                  colWidth = NULL, 
                   formatCurr = NULL, formatPerc = NULL, formatRoun = NULL, 
                   bButtons = FALSE, bResponsive = FALSE,
                   pageLen = 15, bScroll = FALSE, filename = "*", esc = TRUE)
@@ -83,12 +87,18 @@ Table <- function(data, colNames = NULL, bRownames = FALSE, style = "default",
       list(className = 'dt-left', targets = alignment$left)
   }
   
+  # column widths
+  if (!is.null(colWidth)) {
+    colDefs[[length(colDefs) + 1]] <- 
+      list(width = colWidth$width, targets = as.list(colWidth$targets))
+  }
+  
   # options
   opts <- list(
     dom = dom, 
     columnDefs = colDefs ,
     lengthMenu = list(c(5, 15, 50, 100, -1), c('5', '15', '50', '100', 'All')), 
-    pageLength = pageLen, scrollX = bScroll
+    pageLength = pageLen, scrollX = bScroll, autoWidth = FALSE
   )
   
   # shiny input bindings

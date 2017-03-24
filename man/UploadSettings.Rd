@@ -14,6 +14,18 @@ UploadSettings(input, output, session, db, helps = NULL)
 \item{session}{\code{list} from shiny session}
 
 \item{db}{\code{chr} of database file (full path and file name)}
+
+\item{helps}{\code{NULL} or \code{list} with named strings as 
+elements for help texts used in UI elements. Names 
+correspond to elements where texts can be changed: 
+\emph{refAcc_type}, \emph{nameCol}, 
+\emph{ibanCol}, \emph{bicCol}, 
+\emph{dateCol}, \emph{refCol}
+\emph{bookCol}, \emph{valueCol}, 
+\emph{currCol}, \emph{colSep}, 
+\emph{decSep}, \emph{nSkip}, 
+\emph{maxLines}, \emph{headerBool}, 
+\emph{dateFormat}}
 }
 \value{
 \code{list} of 3 elements
@@ -59,4 +71,3 @@ Other application functions: \code{\link{EnteringModalUI}},
   \code{\link{EnteringModal}},
   \code{\link{UploadSettingsUI}}, \code{\link{abacusApp}}
 }
-

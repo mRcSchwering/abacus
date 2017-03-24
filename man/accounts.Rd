@@ -18,4 +18,3 @@ accounts
 This is used to create a test data base. IBAN and BIC do not necessarily make sense.
 }
 \keyword{datasets}
-

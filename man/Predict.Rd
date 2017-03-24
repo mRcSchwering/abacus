@@ -8,8 +8,9 @@ Predict(x, ...)
 }
 \description{
 Generic function for making a prediction with certain objects.
-\code{\link{Predict.Transactions}} is used to predict transaction types of a 
-\emph{Transactions} object (created with \code{\link{Read.Transactions}} for example).
+\code{\link{Predict.Transactions}} is used to predict transaction types 
+of a  \emph{Transactions} object (created with 
+\code{\link{Read.Transactions}} for example).
 }
 \seealso{
 Other procedures: \code{\link{Duplicated.Transactions}},
@@ -20,4 +21,3 @@ Other procedures: \code{\link{Duplicated.Transactions}},
   \code{\link{Read.Transactions}}, \code{\link{Read_csv}},
   \code{\link{Read}}, \code{\link{Update_Predictor}}
 }
-

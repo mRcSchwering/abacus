@@ -10,25 +10,33 @@ Update_Predictor(db)
 \item{db}{\code{chr} the database used / file name and path of database}
 }
 \value{
-\code{TRUE} if sucessful, otherwise a \code{chr} message where the algorithm stopped.
+\code{TRUE} if sucessful, otherwise a \code{chr} message where the 
+         algorithm stopped.
 }
 \description{
 The algorithm updates the prediction model according to the current database.
 }
 \details{
 \enumerate{
- \item Hyperparameters for the predictor are read from the \emph{storage} table (\emph{Params}). 
-       They contain the maximum number of features to use (\emph{nFeats}), whether to only do a diagonal discriminant
-       analysis (\emph{DDL}), and a \emph{time} intervall defining \emph{start} and \emph{end} date of transactions
-       to be included in the training data.
- \item Table \emph{transactions} is read according to hyperparameters and INNER JOINed with \emph{accounts}.
- \item Table \emph{personalAccounts} is read and INNER JOINed with \emph{accounts}.
+ \item Hyperparameters for the predictor are read from the \emph{storage} 
+       table (\emph{Params}). 
+       They contain the maximum number of features to use (\emph{nFeats}), 
+       whether to only do a diagonal discriminant analysis (\emph{DDL}), 
+       and a \emph{time} intervall defining \emph{start} and \emph{end} 
+       date of transactions to be included in the training data.
+ \item Table \emph{transactions} is read according to hyperparameters and 
+       INNER JOINed with \emph{accounts}.
+ \item Table \emph{personalAccounts} is read and INNER JOINed with 
+       \emph{accounts}.
  \item A \code{\link{FeatureExtraction}} is done with the tables.
- \item A \code{\link{Training}} is done with the resulting analytics base table.
- \item Table \emph{Storage} is updated with the resulting \emph{Model} and \emph{FeatureList}.
+ \item A \code{\link{Training}} is done with the resulting analytics 
+       base table.
+ \item Table \emph{Storage} is updated with the resulting \emph{Model} 
+       and \emph{FeatureList}.
 }
 
-If there are to few transactions used for training, the predcitor might not work.
+If there are to few transactions used for training, 
+the predcitor might not work.
 It depends on how well the different types (labels) are represented, 
 but as a rule of thumb there should be a minimum of 20 transactions.
 }
@@ -36,7 +44,11 @@ but as a rule of thumb there should be a minimum of 20 transactions.
 db <- "test.db"
 Create_testDB(db)
 
-params <- list(nFeats = 200, DDL = FALSE, time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1")))
+params <- list(
+  nFeats = 200, 
+  DDL = FALSE, 
+  time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1"))
+)
 InsertBLOB("Params", params, db)
 Update_Predictor(db)
 feats <- SelectBLOB("FeatureList", db)
@@ -52,4 +64,3 @@ Other procedures: \code{\link{Duplicated.Transactions}},
   \code{\link{Predict}}, \code{\link{Read.Transactions}},
   \code{\link{Read_csv}}, \code{\link{Read}}
 }
-

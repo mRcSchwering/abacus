@@ -9,32 +9,42 @@ Prediction(model, abt, feats, ref, verb = FALSE)
 \arguments{
 \item{model}{\code{sda} object containing a sda model}
 
-\item{abt}{\code{num matrix} containing test data with rows as observations and columns as features}
+\item{abt}{\code{num matrix} containing test data with rows as 
+observations and columns as features}
 
-\item{feats}{\code{data.frame} with columns \emph{name} and \emph{value} which identifies the features (columns)
+\item{feats}{\code{data.frame} with columns \emph{name} and 
+\emph{value} which identifies the features (columns)
 of the test data}
 
-\item{ref}{\code{data.frame} with columns \emph{name} and \emph{value} which identifies the features (columns)
+\item{ref}{\code{data.frame} with columns \emph{name} and 
+\emph{value} which identifies the features (columns)
 expected by the \code{model}}
 
-\item{verb}{\code{bool} (=\code{FALSE}) verbose, if true sda predict messages will be printed}
+\item{verb}{\code{bool} (=\code{FALSE}) verbose, if true sda 
+predict messages will be printed}
 }
 \value{
 \code{list} of 3 objects
 \itemize{
-   \item \emph{class} \code{factor} containing predicted classes for test data
-   \item \emph{posterior} \code{num matrix} containing posterior probabilities of each class for test data
+   \item \emph{class} \code{factor} containing predicted 
+         classes for test data
+   \item \emph{posterior} \code{num matrix} containing posterior 
+         probabilities of each class for test data
 }
 }
 \description{
-This function trains a shrinkage discriminant analysis (sda) classifier using James-Stein-type shrinkage estimation.
-It returns the trained model, a feature ranking and a data.frame describing the features used for the model.
+This function trains a shrinkage discriminant analysis (sda) classifier 
+using James-Stein-type shrinkage estimation.
+It returns the trained model, a feature ranking and a data.frame describing 
+the features used for the model.
 }
 \details{
-This function uses the \emph{sda} package for training and ranking of a sda classifier.
-Shrinkage intensity for correlation matrix, variances, and frequencies is estimated from the data.
-With \code{diag} set to \code{TRUE} only the diagonal of the covariance matrix is used.
-This speeds up the process and uses less memory.
+This function uses the \emph{sda} package for training and ranking 
+of a sda classifier.
+Shrinkage intensity for correlation matrix, variances, and frequencies is 
+estimated from the data.
+With \code{diag} set to \code{TRUE} only the diagonal of the covariance 
+matrix is used. This speeds up the process and uses less memory.
 }
 \examples{
 abt1 <- matrix(sample(0:1, 1000*100, replace = TRUE), 1000, 100)
@@ -55,4 +65,3 @@ Other machine learning: \code{\link{CV}},
   \code{\link{Convert}}, \code{\link{FeatureExtraction}},
   \code{\link{Training}}
 }
-

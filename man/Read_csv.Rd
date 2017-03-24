@@ -9,32 +9,45 @@ Read_csv(ref, fileName, columns, db, head = TRUE, colSep = "\\t",
   nMax = -1, dateFormat = "\%d.\%m.\%Y")
 }
 \arguments{
-\item{ref}{\code{chr} for the \emph{type} of the reference account of the uploaded file}
+\item{ref}{\code{chr} for the \emph{type} of the reference account 
+of the uploaded file}
 
-\item{fileName}{\code{chr} for the file to be read (should be a \emph{csv})}
+\item{fileName}{\code{chr} for the file to be read 
+(should be a \emph{csv})}
 
-\item{columns}{\code{list} which defines which columns of the read table (from file) contain which information:
-It must specify \emph{name}, \emph{iban}, \emph{bic}, \emph{date}, 
-\emph{reference}, \emph{entry}, \emph{value}, \emph{currency} as list elements in this order,
-with their according columns in the table as \code{int} values.}
+\item{columns}{\code{list} which defines which columns of the read 
+table (from file) contain which information:
+It must specify \emph{name}, \emph{iban}, \emph{bic}, 
+\emph{date}, \emph{reference}, \emph{entry}, 
+\emph{value}, \emph{currency} as list elements in this 
+order, with their according columns in the table as 
+\code{int} values.}
 
-\item{db}{\code{chr} the database used / file name and path of database}
+\item{db}{\code{chr} the database used / file name and path of 
+database}
 
-\item{head}{\code{bool} (=\code{TRUE}) whether the first line of the file defines column names of the table}
+\item{head}{\code{bool} (=\code{TRUE}) whether the first line of the 
+file defines column names of the table}
 
-\item{colSep}{\code{chr} (=\code{"\\t"}) seperator for columns in the table}
+\item{colSep}{\code{chr} (=\code{"\\t"}) seperator for columns in 
+the table}
 
 \item{decSep}{\code{chr} (=\code{","}) decimal seperator for numbers}
 
-\item{quoteChar}{\code{chr} (=\code{"\\""}) symbol used for quotes in table}
+\item{quoteChar}{\code{chr} (=\code{"\\""}) symbol used for quotes in 
+table}
 
-\item{commentChar}{\code{chr} (=\code{""}) symbol introducing comments in the table}
+\item{commentChar}{\code{chr} (=\code{""}) symbol introducing comments 
+in the table}
 
-\item{nSkip}{\code{int} (=\code{0}) how many lines to skip when reading the file (from top to bottom)}
+\item{nSkip}{\code{int} (=\code{0}) how many lines to skip when 
+reading the file (from top to bottom)}
 
-\item{nMax}{\code{int} (=\code{-1}) maximum number of lines the read (negative to read all lines of file)}
+\item{nMax}{\code{int} (=\code{-1}) maximum number of lines the read 
+(negative to read all lines of file)}
 
-\item{dateFormat}{\code{chr} (=\code{"\%d.\%m.\%Y"} for"13.03.1990") date format to use for converting the date column}
+\item{dateFormat}{\code{chr} (=\code{"\%d.\%m.\%Y"} for"13.03.1990") date 
+format to use for converting the date column}
 }
 \value{
 \code{Transactions} object which is a list of 3 elements:
@@ -45,14 +58,17 @@ with their according columns in the table as \code{int} values.}
 }
 }
 \description{
-This function is used to read a \emph{csv} file and create a \emph{Transactions} object from it.
-This object contains the transactions in a standardized form and information about the reference account.
+This function is used to read a \emph{csv} file and create a 
+\emph{Transactions} object from it.
+This object contains the transactions in a standardized form and information
+about the reference account.
 }
 \details{
 \enumerate{
  \item \emph{reference account} information is retrieved from the database
  \item \emph{file} is read as a table as specified in arguments
- \item table is \emph{converted} as specified with arguments \code{columns} and \code{dateFormat}
+ \item table is \emph{converted} as specified with arguments \code{columns} 
+ and \code{dateFormat}
  \item \emph{Transactions} object is returned
 }
 }
@@ -61,7 +77,8 @@ db <- "test.db"
 Create_testDB(db)
 
 f <- system.file("extdata", "test_transactions.csv", package = "abacus")
-cols <- list(name = 6, iban = 7, bic = 8, date = 3, reference = 5, entry = 4, value = 9, currency = 10)
+cols <- list(name = 6, iban = 7, bic = 8, date = 3, 
+             reference = 5, entry = 4, value = 9, currency = 10)
 tas <- Read_csv("giro", f, cols, db)
 
 }
@@ -74,4 +91,3 @@ Other procedures: \code{\link{Duplicated.Transactions}},
   \code{\link{Predict}}, \code{\link{Read.Transactions}},
   \code{\link{Read}}, \code{\link{Update_Predictor}}
 }
-

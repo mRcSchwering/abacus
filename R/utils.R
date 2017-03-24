@@ -20,3 +20,20 @@
 }
 
 
+#' .Get_types
+#'
+#' @keywords internal
+#'
+#' Read transactions table in db to get unique categories.
+#' 
+#' @export
+#'
+.Get_types <- function(db)
+{
+  query <- "SELECT type FROM transactions"
+  con <- DBI::dbConnect(RSQLite::SQLite(), dbname = db)
+  res <- DBI::dbGetQuery(con, query)
+  DBI::dbDisconnect(con)
+  return(unique(res$type))
+}
+

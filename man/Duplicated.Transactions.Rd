@@ -7,7 +7,8 @@
 \method{Duplicated}{Transactions}(x)
 }
 \arguments{
-\item{x}{\code{Transactions} object (created with \code{\link{Predict.Transactions}})}
+\item{x}{\code{Transactions} object 
+(created with \code{\link{Predict.Transactions}})}
 }
 \value{
 \code{Transactions} object, a list of 4 elements:
@@ -15,39 +16,52 @@
     \item \emph{Transactions} a data.frame of the file that was read
     \item \emph{Reference} a data.frame of the reference account
     \item \emph{db} character of database used
-    \item \emph{Prediction} a data.frame of transactions as they should be entered into the database
-    \item \emph{Duplicated} a data.frame of length \code{nrow} \emph{Transactions} with columns 
-    \emph{bool} and \emph{type}. \emph{bool} says for every row in \emph{Transactions} whether is exists in
-    the database already. If so, \emph{type} says what type this already existing row (in the database) has.
+    \item \emph{Prediction} a data.frame of transactions as they should be 
+          entered into the database
+    \item \emph{Duplicated} a data.frame of length \code{nrow} 
+          \emph{Transactions} with columns 
+          \emph{bool} and \emph{type}. \emph{bool} says for every row in 
+          \emph{Transactions} whether is exists in the database already. 
+          If so, \emph{type} says what type this already existing row 
+          (in the database) has.
 }
 }
 \description{
-This function uses a \emph{Transactions} object as created with \code{\link{Predict.Transactions}} and
-compares it with the database transactions.
-Whether some transactions already exist in the database is returned in form of a dataframe.
+This function uses a \emph{Transactions} object as created with 
+\code{\link{Predict.Transactions}} and compares it 
+with the database transactions.
+Whether some transactions already exist in the database 
+is returned in form of a dataframe.
 }
 \details{
 \enumerate{
-    \item Unique \emph{dates} are read from new transactions in object \code{x}.
+    \item Unique \emph{dates} are read from new transactions in 
+          object \code{x}.
     \item \emph{Select} of transactions with same dates from database.
     \item \emph{Comparison} of new with selected transactions 
     (columns: payor_id, payee_id, date, reference, entry, value, currency)
     \item \emph{Identical} rows are noted and then 
-    \item \emph{Returned} in form of a \code{data.frame} with \code{nrow} new transactions and two
-    columns bool and type. Bool says whether same row in transactions (in \code{x}) was found in the database,
-    type says what the
+    \item \emph{Returned} in form of a \code{data.frame} with \code{nrow} 
+           new transactions and two columns bool and type. Bool says whether 
+           same row in transactions (in \code{x}) was found in the database,
+           type says what the
 }
 }
 \examples{
 db <- "test.db"
 Create_testDB(db)
 
-params <- list(nFeats = 200, DDL = FALSE, time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1")))
+params <- list(
+  nFeats = 200, 
+  DDL = FALSE, 
+  time = list(start = as.Date("2010-1-1"), end = as.Date("2011-1-1"))
+)
 InsertBLOB("Params", params, db)
 Update_Predictor(db)
 
 f <- system.file("extdata", "test_transactions.csv", package = "abacus")
-cols <- list(name = 6, iban = 7, bic = 8, date = 3, reference = 5, entry = 4, value = 9, currency = 10)
+cols <- list(name = 6, iban = 7, bic = 8, date = 3, 
+             reference = 5, entry = 4, value = 9, currency = 10)
 tas <- Read_csv("giro", f, cols, db)
 tas <- Read(tas)
 tas$NewAccounts$owner[3] <- "New Owner 3"
@@ -68,4 +82,3 @@ Other procedures: \code{\link{Duplicated}},
   \code{\link{Read_csv}}, \code{\link{Read}},
   \code{\link{Update_Predictor}}
 }
-

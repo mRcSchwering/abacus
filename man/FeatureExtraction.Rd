@@ -44,4 +44,3 @@ Other machine learning: \code{\link{CV}},
   \code{\link{Convert}}, \code{\link{Prediction}},
   \code{\link{Training}}
 }
-
